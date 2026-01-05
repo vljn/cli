@@ -6,3 +6,8 @@ set(CMAKE_CXX_STANDARD 20)
 add_executable(${PROJECT_NAME} src/main.cpp
         src/Core/Interpreter.h
         src/Core/Interpreter.cpp)
+        src/Core/Interpreter.cpp
+        src/Core/Parser.cpp
+        src/Core/Parser.h
+        src/Core/ParsedCommand.h
+)
