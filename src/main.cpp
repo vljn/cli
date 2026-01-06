@@ -3,7 +3,7 @@
 #include "Core/Interpreter.h"
 
 int main() {
-    Interpreter interpreter;
+    Interpreter interpreter(&std::cin, &std::cout);
     interpreter.run();
     return 0;
 }
