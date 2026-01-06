@@ -12,5 +12,8 @@ add_executable(${PROJECT_NAME} src/main.cpp
         src/Core/ParsedCommand.h
         src/Core/Parser/Parser.cpp
         src/Core/Parser/Parser.h
+        src/Core/Command.cpp
+        src/Core/Command.h
         src/Core/Parser/ParsedCommand.h
+        src/Core/CommandInvocation.h
 )
