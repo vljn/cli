@@ -15,8 +15,8 @@ private:
     std::stack<std::istream*> m_inputStack;
     std::stack<std::ostream*> m_outputStack;
 
-    std::istream *getCurrentInput();
-    std::ostream *getCurrentOutput();
+    std::istream* getCurrentInput();
+    std::ostream* getCurrentOutput();
 
     void printPrompt();
 

@@ -5,7 +5,7 @@
 #include "Parser.h"
 #include "ParsedCommand.h"
 
-ParsedCommand Parser::parse(std::string line) {
+ParsedCommand Parser::parse(std::string& line) {
     trim(line);
     ParsedCommand parsed;
     unsigned index = parseName(line, parsed);
@@ -17,7 +17,7 @@ bool Parser::isAllowed(char c) {
     return std::isalnum(c);
 }
 
-void Parser::trim(std::string &s) {
+void Parser::trim(std::string& s) {
     auto first = s.find_first_not_of(" \t");
     if (first == std::string::npos) {
         s.clear();
@@ -27,12 +27,12 @@ void Parser::trim(std::string &s) {
     s = s.substr(first, (last - first + 1));
 }
 
-void Parser::moveBuffer(std::string &buffer, ParsedCommand &pc, TokenType type) {
+void Parser::moveBuffer(std::string& buffer, ParsedCommand& pc, TokenType type) {
     pc.tokens.push_back(Token{buffer, type});
     buffer = "";
 }
 
-unsigned Parser::parseName(std::string &line, ParsedCommand &pc) {
+unsigned Parser::parseName(std::string& line, ParsedCommand& pc) {
     unsigned i;
     std::string buffer;
     for (i = 0; i < line.length(); i++) {
@@ -50,7 +50,7 @@ unsigned Parser::parseName(std::string &line, ParsedCommand &pc) {
     return i;
 }
 
-void Parser::parseElse(std::string &line, unsigned index, ParsedCommand &pc) {
+void Parser::parseElse(std::string& line, unsigned index, ParsedCommand& pc) {
     std::string buffer;
     unsigned i;
     bool inQuotes = false;

@@ -2,7 +2,9 @@
 #include <stdexcept>
 #include "Interpreter.h"
 
-Interpreter::Interpreter(std::istream *in, std::ostream *out, char prompt) : m_promptChar(prompt) {
+Interpreter::Interpreter(std::istream* in,
+                         std::ostream* out,
+                         char prompt) : m_promptChar(prompt) {
     m_inputStack.push(in);
     m_outputStack.push(out);
 }
@@ -33,7 +35,6 @@ std::string Interpreter::readLine() {
     if (!std::getline(*in, line, '\n')) {
         if (m_inputStack.size() > 1) m_inputStack.pop();
         else m_running = false;
-        return {};
     }
     if (line.size() > 512)
         line.resize(512);
@@ -41,19 +42,19 @@ std::string Interpreter::readLine() {
     return line;
 }
 
-std::istream * Interpreter::getCurrentInput() {
+std::istream* Interpreter::getCurrentInput() {
     if (!m_inputStack.empty()) return m_inputStack.top();
     return nullptr;
 }
 
-std::ostream * Interpreter::getCurrentOutput() {
+std::ostream* Interpreter::getCurrentOutput() {
     if (!m_outputStack.empty()) return m_outputStack.top();
     return nullptr;
 }
 
 void Interpreter::printPrompt() {
-    std::ostream *out = getCurrentOutput();
-    std::istream *in = getCurrentInput();
+    std::ostream* out = getCurrentOutput();
+    std::istream* in = getCurrentInput();
     if (in == &std::cin) {
         *out << m_promptChar << ' ';
     }
