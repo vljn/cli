@@ -1,6 +1,9 @@
 #include <iostream>
 #include <stdexcept>
 #include "Interpreter.h"
+#include "CommandFactory.h"
+#include "Parser/ParsedCommand.h"
+#include "Parser/Parser.h"
 
 Interpreter::Interpreter(std::istream* in,
                          std::ostream* out,
@@ -18,10 +21,9 @@ void Interpreter::loop() {
     while (m_running) {
         printPrompt();
         std::string line = readLine();
-        if (!line.empty()) {
-            // TODO Parse the line
-            *getCurrentOutput() << line << std::endl;
-        }
+        ParsedCommand parsed = Parser::parse(line);
+        auto command = CommandFactory::create(parsed);
+        command->execute(getCurrentInput(), getCurrentOutput());
     }
 }
 
