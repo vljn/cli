@@ -8,7 +8,7 @@ class Command;
 
 class Parser {
 public:
-    static ParsedCommand parse(std::string& line);
+    static ParsedCommand* parse(std::string& line);
 private:
     static bool isAllowed(char c);
     static void trim(std::string& s);

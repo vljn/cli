@@ -21,8 +21,11 @@ void Interpreter::loop() {
     while (m_running) {
         printPrompt();
         std::string line = readLine();
-        ParsedCommand parsed = Parser::parse(line);
-        auto command = CommandFactory::create(parsed);
+        if (line.empty()) continue;
+        ParsedCommand* parsed = Parser::parse(line);
+        if (!parsed) continue;
+        auto command = CommandFactory::create(*parsed);
+        delete parsed;
         command->execute(getCurrentInput(), getCurrentOutput());
     }
 }
@@ -32,7 +35,6 @@ std::string Interpreter::readLine() {
     if (!in) {
         throw std::runtime_error("Interpreter: no current input stream");
     }
-
     std::string line;
     if (!std::getline(*in, line, '\n')) {
         if (m_inputStack.size() > 1) m_inputStack.pop();

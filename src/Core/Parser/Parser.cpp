@@ -5,11 +5,12 @@
 #include "Parser.h"
 #include "ParsedCommand.h"
 
-ParsedCommand Parser::parse(std::string& line) {
+ParsedCommand* Parser::parse(std::string& line) {
     trim(line);
-    ParsedCommand parsed;
-    unsigned index = parseName(line, parsed);
-    parseElse(line, index, parsed);
+    if (line.empty()) return nullptr;
+    auto parsed = new ParsedCommand();
+    unsigned index = parseName(line, *parsed);
+    parseElse(line, index, *parsed);
     return parsed;
 }
 
