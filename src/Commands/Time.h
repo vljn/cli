@@ -6,7 +6,7 @@
 
 class Time : public Command {
 public:
-    Time();
+    Time() = default;
 
     void execute(std::istream* in, std::ostream* out) override;
 };

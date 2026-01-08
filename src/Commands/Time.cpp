@@ -1,8 +1,5 @@
 #include <chrono>
-#include "../Core/Command.h"
 #include "Time.h"
-
-Time::Time() : Command(CommandInvocation{}) {}
 
 void Time::execute(std::istream* in, std::ostream* out) {
     auto now = std::chrono::system_clock::now();
