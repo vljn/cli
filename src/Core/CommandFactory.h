@@ -7,7 +7,7 @@
 
 class CommandFactory {
 public:
-    static std::unique_ptr<Command> create(ParsedCommand& pc);
+    static std::unique_ptr<Command> create(const ParsedCommand& pc);
 };
 
 

@@ -5,10 +5,12 @@
 
 class Command {
 public:
-    Command() = default;
     virtual ~Command() = default;
 
-    virtual void execute(std::istream* in, std::ostream* out) = 0;
+    virtual bool consumesInput() = 0;
+    virtual bool producesOutput() = 0;
+
+    virtual void execute(const std::istream& in, std::ostream& out) = 0;
 };
 
 #endif //CLI_COMMAND_H

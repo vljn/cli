@@ -2,13 +2,14 @@
 #include <iostream>
 #include <stdexcept>
 #include <cctype>
+#include <memory>
 #include "Parser.h"
 #include "ParsedCommand.h"
 
-ParsedCommand* Parser::parse(std::string& line) {
+std::unique_ptr<ParsedCommand> Parser::parse(std::string& line) {
     trim(line);
     if (line.empty()) return nullptr;
-    auto parsed = new ParsedCommand();
+    auto parsed = std::make_unique<ParsedCommand>();
     unsigned index = parseName(line, *parsed);
     parseElse(line, index, *parsed);
     return parsed;
@@ -47,6 +48,8 @@ unsigned Parser::parseName(std::string& line, ParsedCommand& pc) {
         }
         throw std::runtime_error("Character not allowed");
     }
+    if (buffer.empty())
+        throw std::runtime_error("Missing command name");
     pc.name = buffer;
     return i;
 }

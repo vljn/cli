@@ -6,7 +6,7 @@
 
 class Interpreter {
 public:
-    Interpreter(std::istream* in=&std::cin, std::ostream* out=&std::cout, char prompt='$');
+    Interpreter(std::istream& in=std::cin, std::ostream& out=std::cout, char prompt='$');
     void run();
 private:
     bool m_running = false;
@@ -15,8 +15,8 @@ private:
     std::stack<std::istream*> m_inputStack;
     std::stack<std::ostream*> m_outputStack;
 
-    std::istream* getCurrentInput();
-    std::ostream* getCurrentOutput();
+    std::istream& getCurrentInput();
+    std::ostream& getCurrentOutput();
 
     void printPrompt();
 

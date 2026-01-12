@@ -8,7 +8,10 @@ class Time : public Command {
 public:
     Time() = default;
 
-    void execute(std::istream* in, std::ostream* out) override;
+    bool consumesInput() override { return false; }
+    bool producesOutput() override { return true; }
+
+    void execute(const std::istream& in, std::ostream& out) override;
 };
 
 

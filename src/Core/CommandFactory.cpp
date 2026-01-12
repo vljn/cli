@@ -1,9 +1,8 @@
 #include "CommandFactory.h"
 #include "Command.h"
-#include "CommandInvocation.h"
 #include "../Commands/Time.h"
 
-std::unique_ptr<Command> CommandFactory::create(ParsedCommand& pc) {
+std::unique_ptr<Command> CommandFactory::create(const ParsedCommand& pc) {
     if (pc.name == "time") {
         return std::make_unique<Time>();
     }

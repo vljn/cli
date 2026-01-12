@@ -2,14 +2,13 @@
 #include <stdexcept>
 #include "Interpreter.h"
 #include "CommandFactory.h"
-#include "Parser/ParsedCommand.h"
 #include "Parser/Parser.h"
 
-Interpreter::Interpreter(std::istream* in,
-                         std::ostream* out,
+Interpreter::Interpreter(std::istream& in,
+                         std::ostream& out,
                          char prompt) : m_promptChar(prompt) {
-    m_inputStack.push(in);
-    m_outputStack.push(out);
+    m_inputStack.push(&in);
+    m_outputStack.push(&out);
 }
 
 void Interpreter::run() {
@@ -22,21 +21,17 @@ void Interpreter::loop() {
         printPrompt();
         std::string line = readLine();
         if (line.empty()) continue;
-        ParsedCommand* parsed = Parser::parse(line);
+        auto parsed = Parser::parse(line);
         if (!parsed) continue;
         auto command = CommandFactory::create(*parsed);
-        delete parsed;
         command->execute(getCurrentInput(), getCurrentOutput());
     }
 }
 
 std::string Interpreter::readLine() {
-    std::istream* in = getCurrentInput();
-    if (!in) {
-        throw std::runtime_error("Interpreter: no current input stream");
-    }
+    std::istream& in = getCurrentInput();
     std::string line;
-    if (!std::getline(*in, line, '\n')) {
+    if (!std::getline(in, line, '\n')) {
         if (m_inputStack.size() > 1) m_inputStack.pop();
         else m_running = false;
     }
@@ -46,20 +41,20 @@ std::string Interpreter::readLine() {
     return line;
 }
 
-std::istream* Interpreter::getCurrentInput() {
-    if (!m_inputStack.empty()) return m_inputStack.top();
-    return nullptr;
+std::istream& Interpreter::getCurrentInput() {
+    if (m_inputStack.empty()) throw std::logic_error("Input stack empty");
+    return *m_inputStack.top();
 }
 
-std::ostream* Interpreter::getCurrentOutput() {
-    if (!m_outputStack.empty()) return m_outputStack.top();
-    return nullptr;
+std::ostream& Interpreter::getCurrentOutput() {
+    if (m_outputStack.empty()) throw std::logic_error("Output stack empty");
+    return *m_outputStack.top();
 }
 
 void Interpreter::printPrompt() {
-    std::ostream* out = getCurrentOutput();
-    std::istream* in = getCurrentInput();
-    if (in == &std::cin) {
-        *out << m_promptChar << ' ';
+    std::ostream& out = getCurrentOutput();
+    std::istream& in = getCurrentInput();
+    if (&in == &std::cin) {
+        out << m_promptChar << ' ';
     }
 }
