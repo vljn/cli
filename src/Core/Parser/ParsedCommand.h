@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-enum TokenType {
+enum class TokenType {
     Filename,
     QuotedString,
     Option
