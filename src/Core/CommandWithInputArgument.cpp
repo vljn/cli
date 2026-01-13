@@ -18,7 +18,7 @@ CommandWithInputArgument::CommandWithInputArgument(const std::optional<Argument>
     m_in = std::move(file);
 }
 
-void CommandWithInputArgument::execute(const std::istream& in, std::ostream& out) {
+void CommandWithInputArgument::execute(std::istream& in, std::ostream& out) {
     if (m_in) do_execute(*m_in, out);
     else do_execute(in, out);
 }

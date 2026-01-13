@@ -13,7 +13,7 @@ public:
 
     bool producesOutput() override { return false; }
 
-    void execute(const std::istream &in, std::ostream &out) override;
+    void execute(std::istream &in, std::ostream &out) override;
 
 private:
     std::string m_filename;

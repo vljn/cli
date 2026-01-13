@@ -13,12 +13,13 @@ struct Argument {
 class CommandWithInputArgument : public Command {
 public:
     CommandWithInputArgument() = delete;
-    CommandWithInputArgument(const std::optional<Argument>& argument);
+
+    explicit CommandWithInputArgument(const std::optional<Argument>& argument);
 
     bool consumesInput() final { return true; }
-    void execute(const std::istream& in, std::ostream& out) final;
+    void execute(std::istream& in, std::ostream& out) final;
 
-    virtual void do_execute(const std::istream& in, std::ostream& out) = 0;
+    virtual void do_execute(std::istream& in, std::ostream& out) = 0;
 private:
     std::unique_ptr<std::istream> m_in;
 };
