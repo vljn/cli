@@ -19,4 +19,6 @@ add_executable(${PROJECT_NAME} src/main.cpp
         src/Core/CommandWithInputArgument.h
         src/Commands/Date.cpp
         src/Commands/Date.h
+        src/Commands/Touch.cpp
+        src/Commands/Touch.h
 )
