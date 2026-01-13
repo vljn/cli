@@ -21,10 +21,16 @@ void Interpreter::loop() {
         printPrompt();
         std::string line = readLine();
         if (line.empty()) continue;
-        auto parsed = Parser::parse(line);
-        if (!parsed) continue;
-        auto command = CommandFactory::create(*parsed);
-        command->execute(getCurrentInput(), getCurrentOutput());
+        try {
+            auto parsed = Parser::parse(line);
+            if (!parsed) continue;
+            const auto command = CommandFactory::create(*parsed);
+            command->execute(getCurrentInput(), getCurrentOutput());
+        }
+        catch (const std::exception& e) {
+            std::ostream& out = getCurrentOutput();
+            out << e.what() << std::endl;
+        }
     }
 }
 

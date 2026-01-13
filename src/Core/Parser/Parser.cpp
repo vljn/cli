@@ -46,7 +46,7 @@ unsigned Parser::parseName(std::string& line, ParsedCommand& pc) {
             buffer += line[i];
             continue;
         }
-        throw std::runtime_error("Character not allowed");
+        throw std::runtime_error("Invalid character in command name");
     }
     if (buffer.empty())
         throw std::runtime_error("Missing command name");
