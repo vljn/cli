@@ -21,4 +21,6 @@ add_executable(${PROJECT_NAME} src/main.cpp
         src/Commands/Date.h
         src/Commands/Touch.cpp
         src/Commands/Touch.h
+        src/Commands/Wc.cpp
+        src/Commands/Wc.h
 )
