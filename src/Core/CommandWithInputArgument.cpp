@@ -20,5 +20,9 @@ CommandWithInputArgument::CommandWithInputArgument(const std::optional<Argument>
 
 void CommandWithInputArgument::execute(std::istream& in, std::ostream& out) {
     if (m_in) do_execute(*m_in, out);
-    else do_execute(in, out);
+    else {
+        do_execute(in, out);
+        clearerr(stdin);
+        std::cin.clear();
+    }
 }
