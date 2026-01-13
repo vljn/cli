@@ -1,7 +1,7 @@
 #ifndef CLI_ECHO_H
 #define CLI_ECHO_H
 
-#include "../Core/CommandWithInputArgument.h"
+#include "../Core/Command/CommandWithInputArgument.h"
 
 
 class Echo : public CommandWithInputArgument {

@@ -1,10 +1,10 @@
-#include "CommandFactory.h"
 #include "Command.h"
-#include "../Commands/Date.h"
-#include "../Commands/Echo.h"
-#include "../Commands/Time.h"
-#include "../Commands/Touch.h"
-#include "../Commands/Wc.h"
+#include "CommandFactory.h"
+#include "../../Commands/Date.h"
+#include "../../Commands/Echo.h"
+#include "../../Commands/Time.h"
+#include "../../Commands/Touch.h"
+#include "../../Commands/Wc.h"
 
 std::unique_ptr<Command> CommandFactory::create(const ParsedCommand& pc) {
     const auto& name = pc.name;

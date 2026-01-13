@@ -2,7 +2,7 @@
 #define CLI_COMMANDFACTORY_H
 
 #include <memory>
-#include "Parser/ParsedCommand.h"
+#include "../Parser/ParsedCommand.h"
 #include "Command.h"
 
 class CommandFactory {

@@ -1,7 +1,7 @@
 #ifndef CLI_WC_H
 #define CLI_WC_H
 
-#include "../Core/CommandWithInputArgument.h"
+#include "../Core/Command/CommandWithInputArgument.h"
 
 class Wc : public CommandWithInputArgument {
 public:
