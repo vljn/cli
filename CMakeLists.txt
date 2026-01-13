@@ -17,4 +17,6 @@ add_executable(${PROJECT_NAME} src/main.cpp
         src/Core/CommandFactory.h
         src/Core/CommandWithInputArgument.cpp
         src/Core/CommandWithInputArgument.h
+        src/Commands/Date.cpp
+        src/Commands/Date.h
 )
