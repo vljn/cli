@@ -1,6 +1,7 @@
 #include "CommandFactory.h"
 #include "Command.h"
 #include "../Commands/Date.h"
+#include "../Commands/Echo.h"
 #include "../Commands/Time.h"
 #include "../Commands/Touch.h"
 #include "../Commands/Wc.h"
@@ -44,6 +45,17 @@ std::unique_ptr<Command> CommandFactory::create(const ParsedCommand& pc) {
         Argument argument{tokens[1].value, tokens[1].type == TokenType::QuotedString};
         auto mode = tokens[0].value == "w" ? Wc::Mode::Words : Wc::Mode::Chars;
         return std::make_unique<Wc>(argument, mode);
+    }
+    if (name == "echo") {
+        if (tokens.size() > 1)
+            throw std::runtime_error("Number of arguments greater than expected");
+        if (tokens.size() == 1) {
+            if (tokens[0].type == TokenType::Option)
+                throw std::runtime_error("Argument not given");
+            Argument argument{tokens[0].value, tokens[0].type == TokenType::QuotedString};
+            return std::make_unique<Echo>(argument);
+        }
+        return std::make_unique<Echo>(std::nullopt);
     }
     throw std::runtime_error("Command does not exist");
 }
