@@ -57,5 +57,5 @@ std::unique_ptr<Command> CommandFactory::create(const ParsedCommand& pc) {
         }
         return std::make_unique<Echo>(std::nullopt);
     }
-    throw std::runtime_error("Command does not exist");
+    throw std::runtime_error("Unknown command: " + name);
 }
