@@ -6,56 +6,74 @@
 #include "../../Commands/Touch.h"
 #include "../../Commands/Wc.h"
 
+std::unordered_map<std::string, CommandFactory::CommandCreator> CommandFactory::m_commandsMap = {
+    {
+        "time", [](const auto&) -> std::unique_ptr<Command> { return std::make_unique<Time>(); }
+    },
+    {
+        "date", [](const auto&) -> std::unique_ptr<Command> { return std::make_unique<Date>(); }
+    },
+    {
+       "touch", createTouch
+    },
+    {
+        "wc", createWc
+    },
+    {
+        "echo", createEcho
+    }
+};
+
+CommandFactory::CommandPtr CommandFactory::createTouch(ArgumentsVector args) {
+    if (args.size() > 1)
+        throw std::runtime_error("Number of arguments greater than expected");
+    if (args.empty())
+        throw std::runtime_error("Argument not given");
+    if (args[0].type != TokenType::Filename)
+        throw std::runtime_error("Filename argument expected without quotes");
+    return std::make_unique<Touch>(args[0].value);
+}
+
+CommandFactory::CommandPtr CommandFactory::createWc(ArgumentsVector args) {
+    if (args.size() > 2)
+        throw std::runtime_error("Number of arguments greater than expected");
+    if (args.empty())
+        throw std::runtime_error("Argument and option not given");
+    if (args.size() == 1) {
+        if (args[0].type != TokenType::Option)
+            throw std::runtime_error("Option not given");
+        if (args[0].value != "w" and args[0].value != "c")
+            throw std::runtime_error("Invalid option: expected '-w' or '-c'");
+        auto mode = args[0].value == "w" ? Wc::Mode::Words : Wc::Mode::Chars;
+        return std::make_unique<Wc>(std::nullopt, mode);
+    }
+    if (args[0].type != TokenType::Option || args[1].type == TokenType::Option) {
+        throw std::runtime_error("Expected an option followed by an argument");
+    }
+    if (args[0].value != "w" and args[0].value != "c")
+        throw std::runtime_error("Invalid option: expected '-w' or '-c'");
+    Argument argument{args[1].value, args[1].type == TokenType::QuotedString};
+    auto mode = args[0].value == "w" ? Wc::Mode::Words : Wc::Mode::Chars;
+    return std::make_unique<Wc>(argument, mode);
+}
+
+CommandFactory::CommandPtr CommandFactory::createEcho(ArgumentsVector args) {
+    if (args.size() > 1)
+        throw std::runtime_error("Number of arguments greater than expected");
+    if (args.size() == 1) {
+        if (args[0].type == TokenType::Option)
+            throw std::runtime_error("Argument not given");
+        Argument argument{args[0].value, args[0].type == TokenType::QuotedString};
+        return std::make_unique<Echo>(argument);
+    }
+    return std::make_unique<Echo>(std::nullopt);
+}
+
 std::unique_ptr<Command> CommandFactory::create(const ParsedCommand& pc) {
     const auto& name = pc.name;
     const auto& tokens = pc.tokens;
-    if (name == "time") {
-        return std::make_unique<Time>();
-    }
-    if (name == "date") {
-        return std::make_unique<Date>();
-    }
-    if (name == "touch") {
-        if (tokens.size() > 1)
-            throw std::runtime_error("Number of arguments greater than expected");
-        if (tokens.empty())
-            throw std::runtime_error("Argument not given");
-        if (tokens[0].type != TokenType::Filename)
-            throw std::runtime_error("Filename argument expected without quotes");
-        return std::make_unique<Touch>(tokens[0].value);
-    }
-    if (name == "wc") {
-        if (tokens.size() > 2)
-            throw std::runtime_error("Number of arguments greater than expected");
-        if (tokens.empty())
-            throw std::runtime_error("Argument and option not given");
-        if (tokens.size() == 1) {
-            if (tokens[0].type != TokenType::Option)
-                throw std::runtime_error("Option not given");
-            if (tokens[0].value != "w" and tokens[0].value != "c")
-                throw std::runtime_error("Invalid option: expected '-w' or '-c'");
-            auto mode = tokens[0].value == "w" ? Wc::Mode::Words : Wc::Mode::Chars;
-            return std::make_unique<Wc>(std::nullopt, mode);
-        }
-        if (tokens[0].type != TokenType::Option || tokens[1].type == TokenType::Option) {
-            throw std::runtime_error("Expected an option followed by an argument");
-        }
-        if (tokens[0].value != "w" and tokens[0].value != "c")
-            throw std::runtime_error("Invalid option: expected '-w' or '-c'");
-        Argument argument{tokens[1].value, tokens[1].type == TokenType::QuotedString};
-        auto mode = tokens[0].value == "w" ? Wc::Mode::Words : Wc::Mode::Chars;
-        return std::make_unique<Wc>(argument, mode);
-    }
-    if (name == "echo") {
-        if (tokens.size() > 1)
-            throw std::runtime_error("Number of arguments greater than expected");
-        if (tokens.size() == 1) {
-            if (tokens[0].type == TokenType::Option)
-                throw std::runtime_error("Argument not given");
-            Argument argument{tokens[0].value, tokens[0].type == TokenType::QuotedString};
-            return std::make_unique<Echo>(argument);
-        }
-        return std::make_unique<Echo>(std::nullopt);
-    }
-    throw std::runtime_error("Unknown command: " + name);
+    auto it = m_commandsMap.find(name);
+    if (it == m_commandsMap.end())
+        throw std::runtime_error("Unknown command: " + name);
+    return it->second(tokens);
 }
