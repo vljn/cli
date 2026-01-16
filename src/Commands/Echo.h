@@ -8,8 +8,6 @@ public:
     explicit Echo(const std::optional<Argument> &argument)
         : CommandWithInputArgument(argument) { }
 
-    bool producesOutput() override { return true; }
-
     void do_execute(std::istream &in, std::ostream &out, std::ostream& err) override;
 };
 

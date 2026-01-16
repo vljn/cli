@@ -9,10 +9,6 @@ class Touch : public Command {
 public:
     Touch(std::string filename) : m_filename(std::move(filename)) {}
 
-    bool consumesInput() override { return true; }
-
-    bool producesOutput() override { return false; }
-
     void execute(std::istream &in, std::ostream &out, std::ostream& err) override;
 
 private:

@@ -13,8 +13,6 @@ public:
     explicit Wc(const std::optional<Argument> &argument, const Mode mode)
         : CommandWithInputArgument(argument), m_mode(mode) { }
 
-    bool producesOutput() override { return true; }
-
     void do_execute(std::istream& in, std::ostream& out, std::ostream& err) override;
 private:
     Mode m_mode;

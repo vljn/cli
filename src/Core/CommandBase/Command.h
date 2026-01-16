@@ -7,9 +7,6 @@ class Command {
 public:
     virtual ~Command() = default;
 
-    virtual bool consumesInput() = 0;
-    virtual bool producesOutput() = 0;
-
     virtual void execute(std::istream& in, std::ostream& out, std::ostream& err) = 0;
 };
 

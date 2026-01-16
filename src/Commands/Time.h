@@ -5,8 +5,6 @@
 
 class Time : public Command {
 public:
-    bool consumesInput() override { return false; }
-    bool producesOutput() override { return true; }
     void execute(std::istream& in, std::ostream& out, std::ostream& err) override;
 };
 
