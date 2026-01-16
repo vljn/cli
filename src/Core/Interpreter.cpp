@@ -7,9 +7,8 @@
 
 Interpreter::Interpreter(std::istream& in,
                          std::ostream& out,
-                         char prompt) : m_promptChar(prompt) {
+                         char prompt) : m_promptChar(prompt), m_outputStream(out) {
     m_inputStack.push(&in);
-    m_outputStack.push(&out);
 }
 
 void Interpreter::run() {
@@ -26,7 +25,7 @@ void Interpreter::loop() {
             auto parsed = Parser::parse(line);
             if (!parsed) continue;
             const auto command = CommandFactory::create(*parsed);
-            command->execute(getCurrentInput(), getCurrentOutput(), m_errorStream);
+            command->execute(getCurrentInput(), m_outputStream, m_errorStream);
         }
         catch (const std::exception& e) {
             m_errorStream << e.what() << std::endl;
@@ -52,15 +51,9 @@ std::istream& Interpreter::getCurrentInput() {
     return *m_inputStack.top();
 }
 
-std::ostream& Interpreter::getCurrentOutput() {
-    if (m_outputStack.empty()) throw std::logic_error("Output stack empty");
-    return *m_outputStack.top();
-}
-
 void Interpreter::printPrompt() {
-    std::ostream& out = getCurrentOutput();
     std::istream& in = getCurrentInput();
     if (&in == &std::cin) {
-        out << m_promptChar << ' ';
+        m_outputStream << m_promptChar << ' ';
     }
 }

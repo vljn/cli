@@ -13,11 +13,10 @@ private:
     char m_promptChar;
 
     std::stack<std::istream*> m_inputStack;
-    std::stack<std::ostream*> m_outputStack;
+    std::ostream& m_outputStream;
     std::ostream& m_errorStream = std::cerr;
 
     std::istream& getCurrentInput();
-    std::ostream& getCurrentOutput();
 
     void printPrompt();
 
