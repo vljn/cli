@@ -27,7 +27,8 @@ void CommandWithInputArgument::execute(std::istream& in, std::ostream& out, std:
     if (m_in) do_execute(*m_in, out, err);
     else {
         do_execute(in, out, err);
-        clearerr(stdin);
-        std::cin.clear();
+        if (&in == &std::cin and in.eof()) {
+            std::cin.clear();
+        }
     }
 }
