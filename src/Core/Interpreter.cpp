@@ -28,7 +28,7 @@ void Interpreter::loop() {
             command->execute(getCurrentInput(), m_outputStream, m_errorStream);
         }
         catch (const std::exception& e) {
-            m_errorStream << "Error - " << e.what() << std::endl;
+            m_errorStream << e.what() << std::endl;
         }
     }
 }

@@ -1,11 +1,17 @@
 #include "ParserException.h"
 
 ParserException::ParserException(const std::string& line, const std::vector<size_t>& errorPositions,
-    const std::string &message) : std::runtime_error(message) {
+    const std::string &message) : std::runtime_error(fullMessage(line, errorPositions, message)) {
+
+}
+
+std::string ParserException::fullMessage(
+    const std::string& line,
+    const std::vector<size_t>& errorPositions,
+    const std::string &message) {
     std::string errorLine(line.length(), ' ');
     if (errorPositions.empty()) {
-        fullMessage = message;
-        return;
+        return message;
     }
 
     for (auto i : errorPositions) {
@@ -13,9 +19,5 @@ ParserException::ParserException(const std::string& line, const std::vector<size
             errorLine[i] = '^';
     }
 
-    fullMessage = message + "\n" + line + "\n" + errorLine;
-}
-
-const char * ParserException::what() const noexcept {
-    return fullMessage.c_str();
+    return "Error - " + message + "\n" + line + "\n" + errorLine;
 }
