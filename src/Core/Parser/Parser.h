@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <string>
+
 #include "ParsedCommand.h"
 
 class Command;

@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <unordered_map>
+
 #include "../Parser/ParsedCommand.h"
 #include "Command.h"
 
@@ -20,6 +21,5 @@ private:
     static CommandPtr createWc(ArgumentsVector args);
     static CommandPtr createEcho(ArgumentsVector args);
 };
-
 
 #endif //CLI_COMMANDFACTORY_H

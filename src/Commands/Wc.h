@@ -20,5 +20,4 @@ private:
     Mode m_mode;
 };
 
-
 #endif //CLI_WC_H

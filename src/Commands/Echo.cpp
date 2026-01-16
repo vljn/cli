@@ -1,4 +1,5 @@
 #include <string>
+
 #include "Echo.h"
 
 void Echo::do_execute(std::istream &in, std::ostream &out) {

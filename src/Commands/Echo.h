@@ -3,7 +3,6 @@
 
 #include "../Core/Command/CommandWithInputArgument.h"
 
-
 class Echo : public CommandWithInputArgument {
 public:
     explicit Echo(const std::optional<Argument> &argument)
@@ -13,6 +12,5 @@ public:
 
     void do_execute(std::istream &in, std::ostream &out) override;
 };
-
 
 #endif //CLI_ECHO_H

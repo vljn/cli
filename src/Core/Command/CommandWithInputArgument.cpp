@@ -1,7 +1,7 @@
 #include <sstream>
 #include <fstream>
-#include "CommandWithInputArgument.h"
 
+#include "CommandWithInputArgument.h"
 
 CommandWithInputArgument::CommandWithInputArgument(const std::optional<Argument>& argument) {
     if (!argument) return;

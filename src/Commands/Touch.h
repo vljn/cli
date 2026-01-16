@@ -19,5 +19,4 @@ private:
     std::string m_filename;
 };
 
-
 #endif //CLI_TOUCH_H

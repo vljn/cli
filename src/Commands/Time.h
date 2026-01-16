@@ -3,13 +3,11 @@
 
 #include "../Core/Command/Command.h"
 
-
 class Time : public Command {
 public:
     bool consumesInput() override { return false; }
     bool producesOutput() override { return true; }
     void execute(std::istream& in, std::ostream& out) override;
 };
-
 
 #endif //CLI_TIME_H
