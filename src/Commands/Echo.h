@@ -10,7 +10,7 @@ public:
 
     bool producesOutput() override { return true; }
 
-    void do_execute(std::istream &in, std::ostream &out) override;
+    void do_execute(std::istream &in, std::ostream &out, std::ostream& err) override;
 };
 
 #endif //CLI_ECHO_H

@@ -18,9 +18,9 @@ public:
     explicit CommandWithInputArgument(const std::optional<Argument>& argument);
 
     bool consumesInput() final { return true; }
-    void execute(std::istream& in, std::ostream& out) final;
+    void execute(std::istream& in, std::ostream& out, std::ostream& err) final;
 
-    virtual void do_execute(std::istream& in, std::ostream& out) = 0;
+    virtual void do_execute(std::istream& in, std::ostream& out, std::ostream& err) = 0;
 private:
     std::unique_ptr<std::istream> m_in;
 };

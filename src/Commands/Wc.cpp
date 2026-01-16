@@ -1,6 +1,6 @@
 #include "Wc.h"
 
-void Wc::do_execute(std::istream &in, std::ostream &out) {
+void Wc::do_execute(std::istream &in, std::ostream &out, std::ostream& err) {
     int count = 0;
     if (m_mode == Mode::Words) {
         std::string buffer;

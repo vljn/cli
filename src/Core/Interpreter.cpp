@@ -26,11 +26,10 @@ void Interpreter::loop() {
             auto parsed = Parser::parse(line);
             if (!parsed) continue;
             const auto command = CommandFactory::create(*parsed);
-            command->execute(getCurrentInput(), getCurrentOutput());
+            command->execute(getCurrentInput(), getCurrentOutput(), m_errorStream);
         }
         catch (const std::exception& e) {
-            std::ostream& out = getCurrentOutput();
-            out << e.what() << std::endl;
+            m_errorStream << e.what() << std::endl;
         }
     }
 }
