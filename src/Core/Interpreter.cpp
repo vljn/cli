@@ -2,7 +2,7 @@
 #include <stdexcept>
 
 #include "Interpreter.h"
-#include "Command/CommandFactory.h"
+#include "CommandBase/CommandFactory.h"
 #include "Parser/Parser.h"
 
 Interpreter::Interpreter(std::istream& in,

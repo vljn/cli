@@ -1,7 +1,7 @@
 #ifndef CLI_TIME_H
 #define CLI_TIME_H
 
-#include "../Core/Command/Command.h"
+#include "../Core/CommandBase/Command.h"
 
 class Time : public Command {
 public:

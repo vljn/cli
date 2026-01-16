@@ -1,7 +1,7 @@
 #ifndef CLI_DATE_H
 #define CLI_DATE_H
 
-#include "../Core/Command/Command.h"
+#include "../Core/CommandBase/Command.h"
 
 class Date : public Command {
 public:

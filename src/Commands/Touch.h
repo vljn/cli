@@ -3,7 +3,7 @@
 
 #include <utility>
 
-#include "../Core/Command/Command.h"
+#include "../Core/CommandBase/Command.h"
 
 class Touch : public Command {
 public:

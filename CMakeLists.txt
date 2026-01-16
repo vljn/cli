@@ -8,14 +8,14 @@ add_executable(${PROJECT_NAME} src/main.cpp
         src/Core/Interpreter.cpp
         src/Core/Parser/Parser.cpp
         src/Core/Parser/Parser.h
-        src/Core/Command/Command.h
+        src/Core/CommandBase/Command.h
         src/Commands/Time.cpp
         src/Commands/Time.h
         src/Core/Parser/ParsedCommand.h
-        src/Core/Command/CommandFactory.cpp
-        src/Core/Command/CommandFactory.h
-        src/Core/Command/CommandWithInputArgument.cpp
-        src/Core/Command/CommandWithInputArgument.h
+        src/Core/CommandBase/CommandFactory.cpp
+        src/Core/CommandBase/CommandFactory.h
+        src/Core/CommandBase/CommandWithInputArgument.cpp
+        src/Core/CommandBase/CommandWithInputArgument.h
         src/Commands/Date.cpp
         src/Commands/Date.h
         src/Commands/Touch.cpp
