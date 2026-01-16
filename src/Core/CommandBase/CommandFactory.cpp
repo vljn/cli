@@ -1,3 +1,5 @@
+#include <unordered_set>
+
 #include "Command.h"
 #include "CommandFactory.h"
 #include "../../Commands/Date.h"
@@ -5,13 +7,14 @@
 #include "../../Commands/Time.h"
 #include "../../Commands/Touch.h"
 #include "../../Commands/Wc.h"
+#include "../../Exceptions/InvalidOptionsException.h"
 
 std::unordered_map<std::string, CommandFactory::CommandCreator> CommandFactory::m_commandsMap = {
     {
-        "time", [](const auto&) -> std::unique_ptr<Command> { return std::make_unique<Time>(); }
+        "time", createTime
     },
     {
-        "date", [](const auto&) -> std::unique_ptr<Command> { return std::make_unique<Date>(); }
+        "date", createDate
     },
     {
        "touch", createTouch
@@ -24,7 +27,24 @@ std::unordered_map<std::string, CommandFactory::CommandCreator> CommandFactory::
     }
 };
 
+CommandFactory::CommandPtr CommandFactory::createTime(ArgumentsVector args) {
+    validateOptions("Time", args, std::unordered_set<std::string>{});
+    if (!args.empty()) {
+        throw std::runtime_error("Number of arguments greater than expected");
+    }
+    return std::make_unique<Time>();
+}
+
+CommandFactory::CommandPtr CommandFactory::createDate(ArgumentsVector args) {
+    validateOptions("Date", args, std::unordered_set<std::string>{});
+    if (!args.empty()) {
+        throw std::runtime_error("Number of arguments greater than expected");
+    }
+    return std::make_unique<Date>();
+}
+
 CommandFactory::CommandPtr CommandFactory::createTouch(ArgumentsVector args) {
+    validateOptions("Touch", args, std::unordered_set<std::string>{});
     if (args.size() > 1)
         throw std::runtime_error("Number of arguments greater than expected");
     if (args.empty())
@@ -35,6 +55,7 @@ CommandFactory::CommandPtr CommandFactory::createTouch(ArgumentsVector args) {
 }
 
 CommandFactory::CommandPtr CommandFactory::createWc(ArgumentsVector args) {
+    validateOptions("Wc", args, std::unordered_set<std::string>{"w", "c"});
     if (args.size() > 2)
         throw std::runtime_error("Number of arguments greater than expected");
     if (args.empty())
@@ -42,31 +63,41 @@ CommandFactory::CommandPtr CommandFactory::createWc(ArgumentsVector args) {
     if (args.size() == 1) {
         if (args[0].type != TokenType::Option)
             throw std::runtime_error("Option not given");
-        if (args[0].value != "w" and args[0].value != "c")
-            throw std::runtime_error("Invalid option: expected '-w' or '-c'");
         auto mode = args[0].value == "w" ? Wc::Mode::Words : Wc::Mode::Chars;
         return std::make_unique<Wc>(std::nullopt, mode);
     }
     if (args[0].type != TokenType::Option || args[1].type == TokenType::Option) {
         throw std::runtime_error("Expected an option followed by an argument");
     }
-    if (args[0].value != "w" and args[0].value != "c")
-        throw std::runtime_error("Invalid option: expected '-w' or '-c'");
     Argument argument{args[1].value, args[1].type == TokenType::QuotedString};
     auto mode = args[0].value == "w" ? Wc::Mode::Words : Wc::Mode::Chars;
     return std::make_unique<Wc>(argument, mode);
 }
 
 CommandFactory::CommandPtr CommandFactory::createEcho(ArgumentsVector args) {
+    validateOptions("Echo", args, std::unordered_set<std::string>{});
     if (args.size() > 1)
         throw std::runtime_error("Number of arguments greater than expected");
     if (args.size() == 1) {
-        if (args[0].type == TokenType::Option)
-            throw std::runtime_error("Argument not given");
         Argument argument{args[0].value, args[0].type == TokenType::QuotedString};
         return std::make_unique<Echo>(argument);
     }
     return std::make_unique<Echo>(std::nullopt);
+}
+
+void CommandFactory::validateOptions(
+    const std::string &commandName,
+    ArgumentsVector args,
+    const std::unordered_set<std::string> &options) {
+    std::vector<std::string> notFound;
+    for (auto& arg : args) {
+        if (arg.type == TokenType::Option) {
+            if (!options.contains(arg.value)) notFound.push_back(arg.value);
+        }
+    }
+    if (!notFound.empty()) {
+        throw InvalidOptionException(commandName, notFound);
+    }
 }
 
 std::unique_ptr<Command> CommandFactory::create(const ParsedCommand& pc) {

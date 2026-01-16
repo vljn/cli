@@ -26,4 +26,6 @@ add_executable(${PROJECT_NAME} src/main.cpp
         src/Commands/Echo.h
         src/Exceptions/ParserException.cpp
         src/Exceptions/ParserException.h
+        src/Exceptions/InvalidOptionsException.cpp
+        src/Exceptions/InvalidOptionsException.h
 )
