@@ -13,10 +13,11 @@ public:
     static std::unique_ptr<ParsedCommand> parse(std::string& line);
 private:
     static bool isAllowed(char c);
-    static void trim(std::string& s);
     static void moveBuffer(std::string& buffer, ParsedCommand& pc, TokenType type);
-    static unsigned parseName(std::string& line, ParsedCommand& pc);
-    static void parseElse(std::string& line, unsigned index, ParsedCommand& pc);
+    static size_t parseName(std::string &line, size_t index, ParsedCommand &pc, std::vector<size_t> &errorPositions);
+    static void parseElse(std::string &line, size_t index, ParsedCommand &pc, std::vector<size_t> &errorPositions, size_t *quotesPosition, std::
+                          vector<size_t> &invalidOptions);
+    static size_t firstNonWhitespace(const std::string& line);
 };
 
 #endif //CLI_PARSER_H

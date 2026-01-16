@@ -24,4 +24,6 @@ add_executable(${PROJECT_NAME} src/main.cpp
         src/Commands/Wc.h
         src/Commands/Echo.cpp
         src/Commands/Echo.h
+        src/Exceptions/ParserException.cpp
+        src/Exceptions/ParserException.h
 )
