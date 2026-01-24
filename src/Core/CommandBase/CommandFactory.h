@@ -23,6 +23,7 @@ private:
     static CommandPtr createTouch(ArgumentsVector args);
     static CommandPtr createWc(ArgumentsVector args);
     static CommandPtr createEcho(ArgumentsVector args);
+    static CommandPtr createBatch(ArgumentsVector args);
 
     static void validateOptions(
         const std::string &commandName,

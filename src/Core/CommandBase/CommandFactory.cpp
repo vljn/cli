@@ -2,6 +2,7 @@
 
 #include "Command.h"
 #include "CommandFactory.h"
+#include "../../Commands/Batch.h"
 #include "../../Commands/Date.h"
 #include "../../Commands/Echo.h"
 #include "../../Commands/Time.h"
@@ -24,6 +25,9 @@ std::unordered_map<std::string, CommandFactory::CommandCreator> CommandFactory::
     },
     {
         "echo", createEcho
+    },
+    {
+        "batch", createBatch
     }
 };
 
@@ -83,6 +87,16 @@ CommandFactory::CommandPtr CommandFactory::createEcho(ArgumentsVector args) {
         return std::make_unique<Echo>(argument);
     }
     return std::make_unique<Echo>(std::nullopt);
+}
+
+CommandFactory::CommandPtr CommandFactory::createBatch(ArgumentsVector args) {
+    if (args.size() > 1)
+        throw std::runtime_error("Number of arguments greater than expected");
+    if (args.empty())
+        throw std::runtime_error("Argument not given");
+    if (args[0].type != TokenType::Filename)
+        throw std::runtime_error("Filename argument expected without quotes");
+    return std::make_unique<Batch>(args[0].value);
 }
 
 void CommandFactory::validateOptions(

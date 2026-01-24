@@ -25,7 +25,10 @@ void Interpreter::loop() {
             auto parsed = Parser::parse(line);
             if (!parsed) continue;
             const auto command = CommandFactory::create(*parsed);
-            command->execute(m_inputStream, m_outputStream, m_errorStream);
+            auto result = command->execute(m_inputStream, m_outputStream, m_errorStream);
+            if (result.action == InterpreterAction::PushStream) {
+                m_inputStack.push(result.newStream);
+            }
         }
         catch (const std::exception& e) {
             m_errorStream << e.what() << std::endl;
