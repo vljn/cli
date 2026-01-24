@@ -7,7 +7,7 @@
 
 class Touch : public Command {
 public:
-    Touch(std::string filename) : m_filename(std::move(filename)) {}
+    explicit Touch(std::string filename) : m_filename(std::move(filename)) {}
 
     CommandResult execute(std::istream& in, std::ostream& out, std::ostream& err) override;
 

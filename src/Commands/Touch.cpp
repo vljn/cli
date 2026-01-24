@@ -8,7 +8,9 @@ Command::CommandResult Touch::execute(std::istream& in, std::ostream& out, std::
         err << "file already exists: " << m_filename << std::endl;
         return {};
     }
+
     std::ofstream file(m_filename);
+
     if (!file.is_open()) {
         err << "error creating a file: " << m_filename << std::endl;
         return {};

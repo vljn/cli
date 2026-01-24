@@ -7,7 +7,7 @@ class Interpreter;
 
 class Batch : public Command {
 public:
-    Batch(std::string filename) : m_filename(std::move(filename)) { }
+    explicit Batch(std::string filename) : m_filename(std::move(filename)) { }
 
     CommandResult execute(std::istream& in, std::ostream& out, std::ostream& err) override;
 private:
