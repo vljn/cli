@@ -13,12 +13,12 @@ CommandWithInputArgument::CommandWithInputArgument(const std::optional<Argument>
     }
 
     if (!std::filesystem::exists(argument.value().value)) {
-        throw std::runtime_error("File does not exist: " + argument.value().value);
+        throw std::runtime_error("file does not exist: " + argument.value().value);
     }
 
     auto file = std::make_unique<std::ifstream>(argument.value().value);
     if (!*file) {
-        throw std::runtime_error("Error opening a file: " + argument.value().value);
+        throw std::runtime_error("error opening a file: " + argument.value().value);
     }
     m_in = std::move(file);
 }

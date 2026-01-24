@@ -36,46 +36,46 @@ std::unordered_map<std::string, CommandFactory::CommandCreator> CommandFactory::
 };
 
 CommandFactory::CommandPtr CommandFactory::createTime(ArgumentsVector args) {
-    validateOptions("Time", args, std::unordered_set<std::string>{});
+    validateOptions("time", args, std::unordered_set<std::string>{});
     if (!args.empty()) {
-        throw std::runtime_error("Number of arguments greater than expected");
+        throw std::runtime_error("number of arguments greater than expected");
     }
     return std::make_unique<Time>();
 }
 
 CommandFactory::CommandPtr CommandFactory::createDate(ArgumentsVector args) {
-    validateOptions("Date", args, std::unordered_set<std::string>{});
+    validateOptions("date", args, std::unordered_set<std::string>{});
     if (!args.empty()) {
-        throw std::runtime_error("Number of arguments greater than expected");
+        throw std::runtime_error("number of arguments greater than expected");
     }
     return std::make_unique<Date>();
 }
 
 CommandFactory::CommandPtr CommandFactory::createTouch(ArgumentsVector args) {
-    validateOptions("Touch", args, std::unordered_set<std::string>{});
+    validateOptions("touch", args, std::unordered_set<std::string>{});
     if (args.size() > 1)
-        throw std::runtime_error("Number of arguments greater than expected");
+        throw std::runtime_error("number of arguments greater than expected");
     if (args.empty())
-        throw std::runtime_error("Argument not given");
+        throw std::runtime_error("argument not given");
     if (args[0].type != TokenType::Filename)
-        throw std::runtime_error("Filename argument expected without quotes");
+        throw std::runtime_error("filename argument expected without quotes");
     return std::make_unique<Touch>(args[0].value);
 }
 
 CommandFactory::CommandPtr CommandFactory::createWc(ArgumentsVector args) {
-    validateOptions("Wc", args, std::unordered_set<std::string>{"w", "c"});
+    validateOptions("wc", args, std::unordered_set<std::string>{"w", "c"});
     if (args.size() > 2)
-        throw std::runtime_error("Number of arguments greater than expected");
+        throw std::runtime_error("number of arguments greater than expected");
     if (args.empty())
-        throw std::runtime_error("Argument and option not given");
+        throw std::runtime_error("argument and option not given");
     if (args.size() == 1) {
         if (args[0].type != TokenType::Option)
-            throw std::runtime_error("Option not given");
+            throw std::runtime_error("option not given");
         auto mode = args[0].value == "w" ? Wc::Mode::Words : Wc::Mode::Chars;
         return std::make_unique<Wc>(std::nullopt, mode);
     }
     if (args[0].type != TokenType::Option || args[1].type == TokenType::Option) {
-        throw std::runtime_error("Expected an option followed by an argument");
+        throw std::runtime_error("expected an option followed by an argument");
     }
     Argument argument{args[1].value, args[1].type == TokenType::QuotedString};
     auto mode = args[0].value == "w" ? Wc::Mode::Words : Wc::Mode::Chars;
@@ -83,9 +83,9 @@ CommandFactory::CommandPtr CommandFactory::createWc(ArgumentsVector args) {
 }
 
 CommandFactory::CommandPtr CommandFactory::createEcho(ArgumentsVector args) {
-    validateOptions("Echo", args, std::unordered_set<std::string>{});
+    validateOptions("echo", args, std::unordered_set<std::string>{});
     if (args.size() > 1)
-        throw std::runtime_error("Number of arguments greater than expected");
+        throw std::runtime_error("number of arguments greater than expected");
     if (args.size() == 1) {
         Argument argument{args[0].value, args[0].type == TokenType::QuotedString};
         return std::make_unique<Echo>(argument);
@@ -94,25 +94,26 @@ CommandFactory::CommandPtr CommandFactory::createEcho(ArgumentsVector args) {
 }
 
 CommandFactory::CommandPtr CommandFactory::createBatch(ArgumentsVector args) {
+    validateOptions("batch", args, std::unordered_set<std::string>{});
     if (args.size() > 1)
-        throw std::runtime_error("Number of arguments greater than expected");
+        throw std::runtime_error("number of arguments greater than expected");
     if (args.empty())
-        throw std::runtime_error("Argument not given");
+        throw std::runtime_error("argument not given");
     if (args[0].type != TokenType::Filename)
-        throw std::runtime_error("Filename argument expected without quotes");
+        throw std::runtime_error("filename argument expected without quotes");
     return std::make_unique<Batch>(args[0].value);
 }
 
 CommandFactory::CommandPtr CommandFactory::createPrompt(ArgumentsVector args) {
-    validateOptions("Prompt", args, std::unordered_set<std::string>{});
+    validateOptions("prompt", args, std::unordered_set<std::string>{});
     if (args.size() > 1)
-        throw std::runtime_error("Number of arguments greater than expected");
+        throw std::runtime_error("number of arguments greater than expected");
     if (args.size() == 1) {
         if (args[0].type != TokenType::QuotedString)
-            throw std::runtime_error("Expected a quoted string argument");
+            throw std::runtime_error("expected a quoted string argument");
         return std::make_unique<Prompt>(args[0].value);
     }
-    throw std::runtime_error("Argument not given");
+    throw std::runtime_error("argument not given");
 }
 
 void CommandFactory::validateOptions(
@@ -135,6 +136,6 @@ std::unique_ptr<Command> CommandFactory::create(const ParsedCommand& pc) {
     const auto& tokens = pc.tokens;
     auto it = m_commandsMap.find(name);
     if (it == m_commandsMap.end())
-        throw std::runtime_error("Unknown command: " + name);
+        throw std::runtime_error("unknown command: " + name);
     return it->second(tokens);
 }

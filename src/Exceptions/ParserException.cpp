@@ -19,5 +19,5 @@ std::string ParserException::fullMessage(
             errorLine[i] = '^';
     }
 
-    return "Error - " + message + "\n" + line + "\n" + errorLine;
+    return message + "\n" + line + "\n" + errorLine;
 }

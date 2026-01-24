@@ -17,13 +17,13 @@ std::unique_ptr<ParsedCommand> Parser::parse(std::string& line) {
     size_t index = parseName(line, firstChar, *parsed, unexpectedCharacters);
     parseElse(line, index, *parsed, unexpectedCharacters, &quotesError, invalidOptions);
     if (!unexpectedCharacters.empty()) {
-        throw ParserException(line, unexpectedCharacters, "Unexpected characters: ");
+        throw ParserException(line, unexpectedCharacters, "unexpected characters: ");
     }
     if (quotesError != std::string::npos) {
-        throw ParserException(line, {quotesError}, "Quotes not closed");
+        throw ParserException(line, {quotesError}, "quotes not closed");
     }
     if (!invalidOptions.empty()) {
-        throw ParserException(line, invalidOptions, "Option not specified");
+        throw ParserException(line, invalidOptions, "option not specified");
     }
     return parsed;
 }

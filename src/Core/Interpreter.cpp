@@ -35,7 +35,7 @@ void Interpreter::loop() {
             }
         }
         catch (const std::exception& e) {
-            m_errorStream << e.what() << std::endl;
+            m_errorStream << "Error - " << e.what() << std::endl;
         }
     }
 }
