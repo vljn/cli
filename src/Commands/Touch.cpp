@@ -15,5 +15,8 @@ Command::CommandResult Touch::execute(std::istream& in, std::ostream& out, std::
         err << "error creating a file: " << m_filename << std::endl;
         return {};
     }
+
+    file.close();
+
     return {};
 }
