@@ -13,6 +13,7 @@ private:
     char m_promptChar;
 
     std::stack<std::istream*> m_inputStack;
+    std::istream& m_inputStream;
     std::ostream& m_outputStream;
     std::ostream& m_errorStream = std::cerr;
 

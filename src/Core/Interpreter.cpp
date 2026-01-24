@@ -7,8 +7,8 @@
 
 Interpreter::Interpreter(std::istream& in,
                          std::ostream& out,
-                         char prompt) : m_promptChar(prompt), m_outputStream(out) {
-    m_inputStack.push(&in);
+                         const char prompt) : m_promptChar(prompt), m_inputStream(in), m_outputStream(out) {
+    m_inputStack.push(&std::cin);
 }
 
 void Interpreter::run() {
@@ -25,7 +25,7 @@ void Interpreter::loop() {
             auto parsed = Parser::parse(line);
             if (!parsed) continue;
             const auto command = CommandFactory::create(*parsed);
-            command->execute(getCurrentInput(), m_outputStream, m_errorStream);
+            command->execute(m_inputStream, m_outputStream, m_errorStream);
         }
         catch (const std::exception& e) {
             m_errorStream << e.what() << std::endl;
@@ -37,7 +37,10 @@ std::string Interpreter::readLine() {
     std::istream& in = getCurrentInput();
     std::string line;
     if (!std::getline(in, line, '\n')) {
-        if (m_inputStack.size() > 1) m_inputStack.pop();
+        if (m_inputStack.size() > 1) {
+            delete m_inputStack.top();
+            m_inputStack.pop();
+        }
         else m_running = false;
     }
     if (line.size() > 512)
