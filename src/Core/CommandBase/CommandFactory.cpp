@@ -9,6 +9,7 @@
 #include "../../Commands/Touch.h"
 #include "../../Commands/Wc.h"
 #include "../../Commands/Prompt.h"
+#include "../../Commands/Truncate.h"
 #include "../../Exceptions/InvalidOptionsException.h"
 
 std::unordered_map<std::string, CommandFactory::CommandCreator> CommandFactory::m_commandsMap = {
@@ -32,6 +33,9 @@ std::unordered_map<std::string, CommandFactory::CommandCreator> CommandFactory::
     },
     {
         "prompt", createPrompt
+    },
+    {
+        "truncate", createTruncate
     }
 };
 
@@ -114,6 +118,17 @@ CommandFactory::CommandPtr CommandFactory::createPrompt(ArgumentsVector args) {
         return std::make_unique<Prompt>(args[0].value);
     }
     throw std::runtime_error("argument not given");
+}
+
+CommandFactory::CommandPtr CommandFactory::createTruncate(ArgumentsVector args) {
+    validateOptions("truncate", args, std::unordered_set<std::string>{});
+    if (args.size() > 1)
+        throw std::runtime_error("number of arguments greater than expected");
+    if (args.empty())
+        throw std::runtime_error("argument not given");
+    if (args[0].type != TokenType::Filename)
+        throw std::runtime_error("filename argument expected without quotes");
+    return std::make_unique<Truncate>(args[0].value);
 }
 
 void CommandFactory::validateOptions(

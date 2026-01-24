@@ -31,4 +31,6 @@ add_executable(${PROJECT_NAME} src/main.cpp
         src/Exceptions/InvalidOptionsException.cpp
         src/Exceptions/InvalidOptionsException.h
         src/Commands/Prompt.h
+        src/Commands/Truncate.cpp
+        src/Commands/Truncate.h
 )
