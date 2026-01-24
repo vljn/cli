@@ -5,7 +5,8 @@
 
 enum class InterpreterAction {
     None,
-    PushStream
+    PushStream,
+    SetPromptString
 };
 
 class Command {
@@ -13,6 +14,7 @@ public:
     struct CommandResult {
         InterpreterAction action = InterpreterAction::None;
         std::istream* newStream = nullptr;
+        const std::string& newPromptString = "";
     };
 
     virtual ~Command() = default;

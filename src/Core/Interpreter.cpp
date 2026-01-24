@@ -30,6 +30,9 @@ void Interpreter::loop() {
             if (result.action == InterpreterAction::PushStream) {
                 m_inputStack.push(result.newStream);
             }
+            else if (result.action == InterpreterAction::SetPromptString) {
+                m_promptString = result.newPromptString;
+            }
         }
         catch (const std::exception& e) {
             m_errorStream << e.what() << std::endl;

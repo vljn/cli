@@ -8,6 +8,7 @@
 #include "../../Commands/Time.h"
 #include "../../Commands/Touch.h"
 #include "../../Commands/Wc.h"
+#include "../../Commands/Prompt.h"
 #include "../../Exceptions/InvalidOptionsException.h"
 
 std::unordered_map<std::string, CommandFactory::CommandCreator> CommandFactory::m_commandsMap = {
@@ -28,6 +29,9 @@ std::unordered_map<std::string, CommandFactory::CommandCreator> CommandFactory::
     },
     {
         "batch", createBatch
+    },
+    {
+        "prompt", createPrompt
     }
 };
 
@@ -97,6 +101,18 @@ CommandFactory::CommandPtr CommandFactory::createBatch(ArgumentsVector args) {
     if (args[0].type != TokenType::Filename)
         throw std::runtime_error("Filename argument expected without quotes");
     return std::make_unique<Batch>(args[0].value);
+}
+
+CommandFactory::CommandPtr CommandFactory::createPrompt(ArgumentsVector args) {
+    validateOptions("Prompt", args, std::unordered_set<std::string>{});
+    if (args.size() > 1)
+        throw std::runtime_error("Number of arguments greater than expected");
+    if (args.size() == 1) {
+        if (args[0].type != TokenType::QuotedString)
+            throw std::runtime_error("Expected a quoted string argument");
+        return std::make_unique<Prompt>(args[0].value);
+    }
+    throw std::runtime_error("Argument not given");
 }
 
 void CommandFactory::validateOptions(
