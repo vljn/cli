@@ -23,12 +23,13 @@ CommandWithInputArgument::CommandWithInputArgument(const std::optional<Argument>
     m_in = std::move(file);
 }
 
-void CommandWithInputArgument::execute(std::istream& in, std::ostream& out, std::ostream& err) {
-    if (m_in) do_execute(*m_in, out, err);
+Command::CommandResult CommandWithInputArgument::execute(std::istream& in, std::ostream& out, std::ostream& err) {
+    if (m_in) return do_execute(*m_in, out, err);
     else {
-        do_execute(in, out, err);
+        const auto result = do_execute(in, out, err);
         if (&in == &std::cin and in.eof()) {
             std::cin.clear();
         }
+        return result;
     }
 }

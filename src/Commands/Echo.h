@@ -8,7 +8,7 @@ public:
     explicit Echo(const std::optional<Argument> &argument)
         : CommandWithInputArgument(argument) { }
 
-    void do_execute(std::istream &in, std::ostream &out, std::ostream& err) override;
+    CommandResult do_execute(std::istream& in, std::ostream& out, std::ostream& err) override;
 };
 
 #endif //CLI_ECHO_H

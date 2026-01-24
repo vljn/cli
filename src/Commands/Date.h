@@ -5,7 +5,7 @@
 
 class Date : public Command {
 public:
-    void execute(std::istream &in, std::ostream &out, std::ostream& err) override;
+    CommandResult execute(std::istream& in, std::ostream& out, std::ostream& err) override;
 };
 
 #endif //CLI_DATE_H
