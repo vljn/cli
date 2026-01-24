@@ -1,5 +1,6 @@
 #include <iostream>
 #include <stdexcept>
+#include <utility>
 
 #include "Interpreter.h"
 #include "CommandBase/CommandFactory.h"
@@ -7,7 +8,7 @@
 
 Interpreter::Interpreter(std::istream& in,
                          std::ostream& out,
-                         const char prompt) : m_promptChar(prompt), m_inputStream(in), m_outputStream(out) {
+                         std::string prompt) : m_promptString(std::move(prompt)), m_inputStream(in), m_outputStream(out) {
     m_inputStack.push(&std::cin);
 }
 
@@ -58,8 +59,8 @@ std::istream& Interpreter::getCurrentInput() {
 }
 
 void Interpreter::printPrompt() {
-    std::istream& in = getCurrentInput();
+    const std::istream& in = getCurrentInput();
     if (&in == &std::cin) {
-        m_outputStream << m_promptChar << ' ';
+        m_outputStream << m_promptString << ' ';
     }
 }
