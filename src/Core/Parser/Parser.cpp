@@ -114,7 +114,7 @@ void Parser::parseElse(std::string& line, size_t index, ParsedCommand& pc, std::
             isOption = false;
             continue;
         }
-        if (isAllowed(c) or c == '.' or c == '_') {
+        if (isAllowed(c) or c == '.' or c == '_' or c == '/') {
             buffer += c;
         }
         else {
