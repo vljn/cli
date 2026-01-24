@@ -1,7 +1,7 @@
 #include <fstream>
 #include <filesystem>
 
-#include "Touch.h"
+#include "Commands/Touch.h"
 
 Command::CommandResult Touch::execute(std::istream& in, std::ostream& out, std::ostream& err) {
     if (std::filesystem::exists(m_filename)) {

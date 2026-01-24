@@ -1,4 +1,4 @@
-#include "InvalidOptionsException.h"
+#include "Exceptions/InvalidOptionsException.h"
 
 InvalidOptionException::InvalidOptionException(
     const std::string &commandName,

@@ -1,7 +1,7 @@
 #include <filesystem>
 #include <fstream>
 
-#include "Batch.h"
+#include "Commands/Batch.h"
 
 Command::CommandResult Batch::execute(std::istream& in, std::ostream& out, std::ostream& err) {
     if (!std::filesystem::exists(m_filename)) {

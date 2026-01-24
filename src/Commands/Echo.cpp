@@ -1,6 +1,6 @@
 #include <string>
 
-#include "Echo.h"
+#include "Commands/Echo.h"
 
 Command::CommandResult Echo::do_execute(std::istream& in, std::ostream& out, std::ostream& err) {
     std::string toPrint;

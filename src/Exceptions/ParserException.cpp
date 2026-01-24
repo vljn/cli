@@ -1,7 +1,7 @@
-#include "ParserException.h"
+#include "Exceptions/ParserException.h"
 
 ParserException::ParserException(const std::string& line, const std::vector<size_t>& errorPositions,
-    const std::string &message) : std::runtime_error(fullMessage(line, errorPositions, message)) {
+                                 const std::string &message) : std::runtime_error(fullMessage(line, errorPositions, message)) {
 
 }
 

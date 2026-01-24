@@ -1,16 +1,16 @@
 #include <unordered_set>
 
-#include "Command.h"
-#include "CommandFactory.h"
-#include "../../Commands/Batch.h"
-#include "../../Commands/Date.h"
-#include "../../Commands/Echo.h"
-#include "../../Commands/Time.h"
-#include "../../Commands/Touch.h"
-#include "../../Commands/Wc.h"
-#include "../../Commands/Prompt.h"
-#include "../../Commands/Truncate.h"
-#include "../../Exceptions/InvalidOptionsException.h"
+#include "Core/CommandBase/Command.h"
+#include "Core/CommandBase/CommandFactory.h"
+#include "Commands/Batch.h"
+#include "Commands/Date.h"
+#include "Commands/Echo.h"
+#include "Commands/Time.h"
+#include "Commands/Touch.h"
+#include "Commands/Wc.h"
+#include "Commands/Prompt.h"
+#include "Commands/Truncate.h"
+#include "Exceptions/InvalidOptionsException.h"
 
 std::unordered_map<std::string, CommandFactory::CommandCreator> CommandFactory::m_commandsMap = {
     {

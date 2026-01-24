@@ -5,8 +5,8 @@
 #include <unordered_map>
 #include <unordered_set>
 
-#include "../Parser/ParsedCommand.h"
-#include "Command.h"
+#include "Core/Parser/ParsedCommand.h"
+#include "Core/CommandBase/Command.h"
 
 class CommandFactory {
 public:

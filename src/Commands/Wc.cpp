@@ -1,4 +1,4 @@
-#include "Wc.h"
+#include "Commands/Wc.h"
 
 Command::CommandResult Wc::do_execute(std::istream& in, std::ostream& out, std::ostream& err) {
     int count = 0;

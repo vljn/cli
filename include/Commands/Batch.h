@@ -1,7 +1,7 @@
 #ifndef CLI_BATCH_H
 #define CLI_BATCH_H
 
-#include "../Core/CommandBase/Command.h"
+#include "Core/CommandBase/Command.h"
 
 class Interpreter;
 

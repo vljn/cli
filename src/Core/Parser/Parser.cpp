@@ -3,9 +3,9 @@
 #include <cctype>
 #include <memory>
 
-#include "Parser.h"
-#include "ParsedCommand.h"
-#include "../../Exceptions/ParserException.h"
+#include "Core/Parser/Parser.h"
+#include "Core/Parser/ParsedCommand.h"
+#include "Exceptions/ParserException.h"
 
 std::unique_ptr<ParsedCommand> Parser::parse(std::string& line) {
     auto firstChar = firstNonWhitespace(line);

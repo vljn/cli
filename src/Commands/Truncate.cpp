@@ -1,7 +1,7 @@
 #include <filesystem>
 #include <fstream>
 
-#include "Truncate.h"
+#include "Commands/Truncate.h"
 
 
 Command::CommandResult Truncate::execute(std::istream& in, std::ostream& out, std::ostream& err) {

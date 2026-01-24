@@ -2,7 +2,7 @@
 #include <fstream>
 #include <filesystem>
 
-#include "CommandWithInputArgument.h"
+#include "Core/CommandBase/CommandWithInputArgument.h"
 
 CommandWithInputArgument::CommandWithInputArgument(const std::optional<Argument>& argument) {
     if (!argument) return;

@@ -1,7 +1,7 @@
 #ifndef CLI_TRUNCATE_H
 #define CLI_TRUNCATE_H
 
-#include "../Core/CommandBase/Command.h"
+#include "Core/CommandBase/Command.h"
 
 class Truncate : public Command {
 public:
