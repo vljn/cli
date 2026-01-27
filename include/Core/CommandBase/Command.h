@@ -12,7 +12,7 @@ enum class InterpreterAction {
 struct CommandResult {
     InterpreterAction action = InterpreterAction::None;
     std::istream* newStream = nullptr;
-    const std::string& newPromptString = "";
+    const std::string newPromptString;
 };
 
 class Command {
