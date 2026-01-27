@@ -9,14 +9,14 @@ enum class InterpreterAction {
     SetPromptString
 };
 
+struct CommandResult {
+    InterpreterAction action = InterpreterAction::None;
+    std::istream* newStream = nullptr;
+    const std::string& newPromptString = "";
+};
+
 class Command {
 public:
-    struct CommandResult {
-        InterpreterAction action = InterpreterAction::None;
-        std::istream* newStream = nullptr;
-        const std::string& newPromptString = "";
-    };
-
     virtual ~Command() = default;
 
     virtual CommandResult execute(std::istream& in, std::ostream& out, std::ostream& err) = 0;

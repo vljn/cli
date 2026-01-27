@@ -3,7 +3,7 @@
 
 #include "Commands/Touch.h"
 
-Command::CommandResult Touch::execute(std::istream& in, std::ostream& out, std::ostream& err) {
+CommandResult Touch::execute(std::istream& in, std::ostream& out, std::ostream& err) {
     if (std::filesystem::exists(m_filename)) {
         err << "file already exists: " << m_filename << std::endl;
         return {};

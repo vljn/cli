@@ -14,7 +14,7 @@ private:
     std::string m_promptString;
 };
 
-inline Command::CommandResult Prompt::execute(std::istream& in, std::ostream& out, std::ostream& err) {
+inline CommandResult Prompt::execute(std::istream& in, std::ostream& out, std::ostream& err) {
     return {InterpreterAction::SetPromptString, nullptr, m_promptString};
 }
 

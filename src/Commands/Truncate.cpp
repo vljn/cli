@@ -4,7 +4,7 @@
 #include "Commands/Truncate.h"
 
 
-Command::CommandResult Truncate::execute(std::istream& in, std::ostream& out, std::ostream& err) {
+CommandResult Truncate::execute(std::istream& in, std::ostream& out, std::ostream& err) {
     if (!std::filesystem::exists(m_filename)) {
         err << "file does not exist: " << m_filename << std::endl;
         return {};
