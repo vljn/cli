@@ -4,7 +4,7 @@
 #include <memory>
 #include <optional>
 
-#include "Core/CommandBase/Command.h"
+#include "Command.h"
 
 struct Argument {
     std::string value;
