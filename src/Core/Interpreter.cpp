@@ -8,7 +8,8 @@
 
 Interpreter::Interpreter(std::istream& in,
                          std::ostream& out,
-                         std::string prompt) : m_promptString(std::move(prompt)), m_inputStream(in), m_outputStream(out) {
+                         std::ostream& errorOut,
+                         std::string prompt) : m_promptString(std::move(prompt)), m_inputStream(in), m_outputStream(out), m_errorStream(errorOut) {
     m_inputStack.push(&std::cin);
 }
 
