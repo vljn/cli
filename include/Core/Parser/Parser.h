@@ -10,12 +10,12 @@ class Command;
 
 class Parser {
 public:
-    static std::unique_ptr<ParsedCommand> parse(std::string& line);
+    static std::unique_ptr<ParsedCommand> parse(const std::string& line);
 private:
     static bool isAllowed(char c);
     static void moveBuffer(std::string& buffer, ParsedCommand& pc, TokenType type);
-    static size_t parseName(std::string &line, size_t index, ParsedCommand &pc, std::vector<size_t> &errorPositions);
-    static void parseElse(std::string &line, size_t index, ParsedCommand &pc, std::vector<size_t> &errorPositions, size_t *quotesPosition, std::
+    static size_t parseName(const std::string &line, size_t index, ParsedCommand &pc, std::vector<size_t> &errorPositions);
+    static void parseElse(const std::string &line, size_t index, ParsedCommand &pc, std::vector<size_t> &errorPositions, size_t *quotesPosition, std::
                           vector<size_t> &invalidOptions);
     static size_t firstNonWhitespace(const std::string& line);
 };
