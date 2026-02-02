@@ -1,7 +1,7 @@
 #include <unordered_set>
 
 #include "Core/CommandBase/Command.h"
-#include "Core/CommandBase/CommandFactory.h"
+#include "Core/Factory/CommandFactory.h"
 #include "Commands/Batch.h"
 #include "Commands/Date.h"
 #include "Commands/Echo.h"

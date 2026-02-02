@@ -6,7 +6,7 @@
 #include <unordered_set>
 
 #include "Core/Parser/ParsedCommand.h"
-#include "Command.h"
+#include "Core/CommandBase/Command.h"
 
 class CommandFactory {
 public:

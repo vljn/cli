@@ -3,7 +3,7 @@
 #include <utility>
 
 #include "Core/Interpreter.h"
-#include "Core/CommandBase/CommandFactory.h"
+#include "Core/Factory/CommandFactory.h"
 #include "Core/Parser/Parser.h"
 
 Interpreter::Interpreter(std::istream& in,
