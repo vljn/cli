@@ -51,8 +51,8 @@ std::string Interpreter::readLine() {
         }
         else m_running = false;
     }
-    if (line.size() > 512)
-        line.resize(512);
+    if (line.size() > MAX_LINE_LENGTH)
+        line.resize(MAX_LINE_LENGTH);
 
     return line;
 }

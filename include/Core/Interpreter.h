@@ -9,6 +9,8 @@ public:
     Interpreter(std::istream& in=std::cin, std::ostream& out=std::cout, std::ostream& errorOut=std::cerr, std::string prompt="$");
     void run();
 private:
+    const size_t MAX_LINE_LENGTH = 512;
+
     bool m_running = false;
     std::string m_promptString;
 
