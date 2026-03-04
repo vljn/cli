@@ -40,8 +40,7 @@ size_t Parser::firstNonWhitespace(const std::string &line) {
 }
 
 void Parser::moveBuffer(std::string& buffer, ParsedCommand& pc, const TokenType type) {
-    if (!buffer.empty())
-        pc.tokens.push_back(Token{buffer, type});
+    pc.tokens.push_back(Token{buffer, type});
     buffer = "";
 }
 
@@ -99,7 +98,8 @@ void Parser::parseElse(const std::string& line, const size_t index, ParsedComman
             continue;
         }
         if (isspace(c)) {
-            if (prevSpace) {
+            if (prevSpace || buffer.empty()) {
+                prevSpace = true;
                 continue;
             }
             if (isOption and buffer.empty()) {

@@ -26,6 +26,9 @@ private:
     static CommandPtr createBatch(ArgumentsVector args);
     static CommandPtr createPrompt(ArgumentsVector args);
     static CommandPtr createTruncate(ArgumentsVector args);
+    static CommandPtr createRm(ArgumentsVector args);
+    static CommandPtr createHead(ArgumentsVector args);
+    static CommandPtr createTr(ArgumentsVector args);
 
     static void validateOptions(
         const std::string &commandName,
