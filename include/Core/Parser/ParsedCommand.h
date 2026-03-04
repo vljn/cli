@@ -5,7 +5,7 @@
 #include <vector>
 
 enum class TokenType {
-    Filename,
+    Word,
     QuotedString,
     Option
 };

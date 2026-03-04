@@ -74,7 +74,7 @@ CommandFactory::CommandPtr CommandFactory::createTouch(ArgumentsVector args) {
         throw std::runtime_error("number of arguments greater than expected");
     if (args.empty())
         throw std::runtime_error("argument not given");
-    if (args[0].type != TokenType::Filename)
+    if (args[0].type != TokenType::Word)
         throw std::runtime_error("filename argument expected without quotes");
     return std::make_unique<Touch>(args[0].value);
 }
@@ -116,7 +116,7 @@ CommandFactory::CommandPtr CommandFactory::createBatch(ArgumentsVector args) {
         throw std::runtime_error("number of arguments greater than expected");
     if (args.empty())
         throw std::runtime_error("argument not given");
-    if (args[0].type != TokenType::Filename)
+    if (args[0].type != TokenType::Word)
         throw std::runtime_error("filename argument expected without quotes");
     return std::make_unique<Batch>(args[0].value);
 }
@@ -139,7 +139,7 @@ CommandFactory::CommandPtr CommandFactory::createTruncate(ArgumentsVector args) 
         throw std::runtime_error("number of arguments greater than expected");
     if (args.empty())
         throw std::runtime_error("argument not given");
-    if (args[0].type != TokenType::Filename)
+    if (args[0].type != TokenType::Word)
         throw std::runtime_error("filename argument expected without quotes");
     return std::make_unique<Truncate>(args[0].value);
 }
@@ -150,7 +150,7 @@ CommandFactory::CommandPtr CommandFactory::createRm(ArgumentsVector args) {
         throw std::runtime_error("number of arguments greater than expected");
     if (args.empty())
         throw std::runtime_error("argument not given");
-    if (args[0].type != TokenType::Filename)
+    if (args[0].type != TokenType::Word)
         throw std::runtime_error("filename argument expected without quotes");
     return std::make_unique<Rm>(args[0].value);
 }
@@ -210,7 +210,7 @@ CommandFactory::CommandPtr CommandFactory::createTr(ArgumentsVector args) {
         Argument argument{args[0].value, args[0].type == TokenType::QuotedString};
         return std::make_unique<Tr>(argument, args[0].value, "");
     }
-    if (args[0].type == TokenType::Option || args[1].type != TokenType::Option || args[2].type == TokenType::Option || args[2].type == TokenType::Filename) {
+    if (args[0].type == TokenType::Option || args[1].type != TokenType::Option || args[2].type == TokenType::Option || args[2].type == TokenType::Word) {
         throw std::runtime_error("expected an argument followed by -what option followed by -with string");
     }
     Argument argument{args[0].value, args[0].type == TokenType::QuotedString};
