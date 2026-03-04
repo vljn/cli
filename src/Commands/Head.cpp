@@ -4,9 +4,13 @@ CommandResult Head::do_execute(std::istream& in, std::ostream& out, std::ostream
     std::string buffer;
     std::string toPrint;
     int i = 0;
-    while (i != m_lineCount && std::getline(in, buffer)) {
-        toPrint += buffer + '\n';
-        i++;
+    while (std::getline(in, buffer)) {
+        if (m_lineCount > i++) {
+            toPrint += buffer + '\n';
+        }
+        if (&in != &std::cin) {
+            break;
+        }
     }
     out << toPrint;
 
