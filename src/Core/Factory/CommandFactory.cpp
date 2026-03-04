@@ -214,7 +214,7 @@ CommandFactory::CommandPtr CommandFactory::createTr(ArgumentsVector args) {
         throw std::runtime_error("expected an argument followed by -what option followed by -with string");
     }
     Argument argument{args[0].value, args[0].type == TokenType::QuotedString};
-    return std::make_unique<Tr>(argument, args[0].value, args[1].value);
+    return std::make_unique<Tr>(argument, args[1].value, args[2].value);
 }
 
 void CommandFactory::validateOptions(
