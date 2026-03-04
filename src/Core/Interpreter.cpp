@@ -1,5 +1,4 @@
 #include <iostream>
-#include <stdexcept>
 #include <utility>
 
 #include "Core/Interpreter.h"
@@ -9,9 +8,7 @@
 Interpreter::Interpreter(std::istream& in,
                          std::ostream& out,
                          std::ostream& errorOut,
-                         std::string prompt) : m_promptString(std::move(prompt)), m_inputStream(in), m_outputStream(out), m_errorStream(errorOut) {
-    m_inputStack.push(&std::cin);
-}
+                         std::string prompt) : m_promptString(std::move(prompt)), m_inputStream(in), m_outputStream(out), m_errorStream(errorOut) { }
 
 void Interpreter::run() {
     m_running = true;
@@ -29,7 +26,9 @@ void Interpreter::loop() {
             const auto command = CommandFactory::create(*parsed);
             auto result = command->execute(m_inputStream, m_outputStream, m_errorStream);
             if (result.action == InterpreterAction::PushStream) {
-                m_inputStack.push(result.newStream);
+                if (result.newStream) {
+                    m_inputStack.push(std::move(result.newStream));
+                }
             }
             else if (result.action == InterpreterAction::SetPromptString) {
                 m_promptString = result.newPromptString;
@@ -45,8 +44,7 @@ std::string Interpreter::readLine() {
     std::istream& in = getCurrentInput();
     std::string line;
     if (!std::getline(in, line, '\n')) {
-        if (m_inputStack.size() > 1) {
-            delete m_inputStack.top();
+        if (!m_inputStack.empty()) {
             m_inputStack.pop();
         }
         else m_running = false;
@@ -58,13 +56,13 @@ std::string Interpreter::readLine() {
 }
 
 std::istream& Interpreter::getCurrentInput() {
-    if (m_inputStack.empty()) throw std::logic_error("Input stack empty");
+    if (m_inputStack.empty()) return m_inputStream;
     return *m_inputStack.top();
 }
 
 void Interpreter::printPrompt() {
     const std::istream& in = getCurrentInput();
-    if (&in == &std::cin) {
+    if (&in == &m_inputStream) {
         m_outputStream << m_promptString << ' ';
     }
 }

@@ -2,6 +2,7 @@
 #define CLI_COMMAND_H
 
 #include <iostream>
+#include <memory>
 
 enum class InterpreterAction {
     None,
@@ -11,7 +12,7 @@ enum class InterpreterAction {
 
 struct CommandResult {
     InterpreterAction action = InterpreterAction::None;
-    std::istream* newStream = nullptr;
+    std::unique_ptr<std::istream> newStream;
     const std::string newPromptString;
 };
 

@@ -1,5 +1,6 @@
 #include <filesystem>
 #include <fstream>
+#include <utility>
 
 #include "Commands/Batch.h"
 
@@ -9,12 +10,12 @@ CommandResult Batch::execute(std::istream& in, std::ostream& out, std::ostream& 
         return {};
     }
 
-    const auto file = new std::ifstream(m_filename);
+    auto file = std::make_unique<std::ifstream>(m_filename);
 
     if (!file->is_open()) {
         err << "error opening a file: " << m_filename << std::endl;
         return {};
     }
 
-    return {InterpreterAction::PushStream, file};
+    return {InterpreterAction::PushStream, std::move(file)};
 }

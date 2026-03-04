@@ -2,6 +2,7 @@
 #define CLI_INTERPRETER_H
 
 #include <iostream>
+#include <memory>
 #include <stack>
 
 class Interpreter {
@@ -14,7 +15,7 @@ private:
     bool m_running = false;
     std::string m_promptString;
 
-    std::stack<std::istream*> m_inputStack;
+    std::stack<std::unique_ptr<std::istream>> m_inputStack;
     std::istream& m_inputStream;
     std::ostream& m_outputStream;
     std::ostream& m_errorStream;
