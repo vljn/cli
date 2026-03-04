@@ -13,6 +13,7 @@ CommandResult Head::do_execute(std::istream& in, std::ostream& out, std::ostream
         }
     }
     out << toPrint;
+    out.flush();
 
     return {};
 }

@@ -9,6 +9,7 @@ CommandResult Echo::do_execute(std::istream& in, std::ostream& out, std::ostream
         toPrint += buffer + '\n';
     }
     out << toPrint;
+    out.flush();
 
     return {};
 }
