@@ -29,8 +29,8 @@ void Interpreter::loop() {
             if (!parsed) continue;
             const auto command = CommandFactory::create(*parsed);
 
-            std::unique_ptr<std::istream> in;
-            std::unique_ptr<std::ostream> out;
+            std::unique_ptr<std::istream> in = nullptr;
+            std::unique_ptr<std::ostream> out = nullptr;
             if (!command->consumesInput() && !parsed->redirectInFilename.empty()) {
                 throw std::runtime_error("redirection of input is not allowed for this command");
             }
@@ -41,11 +41,16 @@ void Interpreter::loop() {
             }
             if (!parsed->redirectOutFilename.empty())
                 out = handleOutRedirection(*parsed);
-            auto result = command->execute(in ? *in : m_inputStream, out ? *out : m_outputStream, m_errorStream);
+            auto result = command->execute(in ? *in : m_inputStream, out ? *out : getCurrentOutput(), m_errorStream);
 
             if (result.action == InterpreterAction::PushStream) {
                 if (result.newStream) {
                     m_inputStack.push(std::move(result.newStream));
+                    if (out) {
+                        m_outputStack.push_back(std::move(out));
+                    } else {
+                        m_outputStack.push_back(nullptr);
+                    }
                 }
             }
             else if (result.action == InterpreterAction::SetPromptString) {
@@ -107,6 +112,14 @@ std::string Interpreter::readLine() {
 std::istream& Interpreter::getCurrentInput() {
     if (m_inputStack.empty()) return m_inputStream;
     return *m_inputStack.top();
+}
+
+std::ostream& Interpreter::getCurrentOutput() {
+    if (m_outputStack.empty()) return m_outputStream;
+    for (int i = m_outputStack.size() - 1; i >= 0; --i) {
+        if (m_outputStack[i]) return *m_outputStack[i];
+    }
+    return m_outputStream;
 }
 
 void Interpreter::printPrompt() {

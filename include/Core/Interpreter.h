@@ -4,6 +4,7 @@
 #include <iostream>
 #include <memory>
 #include <stack>
+#include <vector>
 
 struct ParsedCommand;
 
@@ -19,10 +20,12 @@ private:
 
     std::stack<std::unique_ptr<std::istream>> m_inputStack;
     std::istream& m_inputStream;
+    std::vector<std::unique_ptr<std::ostream>> m_outputStack;
     std::ostream& m_outputStream;
     std::ostream& m_errorStream;
 
     std::istream& getCurrentInput();
+    std::ostream& getCurrentOutput();
 
     void printPrompt();
 
