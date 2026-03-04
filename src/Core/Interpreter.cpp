@@ -21,7 +21,8 @@ void Interpreter::loop() {
         std::string line = readLine();
         if (line.empty()) continue;
         try {
-            auto parsed = Parser::parse(line);
+            Parser p(line);
+            auto parsed = p.parse();
             if (!parsed) continue;
             const auto command = CommandFactory::create(*parsed);
             auto result = command->execute(m_inputStream, m_outputStream, m_errorStream);

@@ -1,4 +1,4 @@
-#include <string>
+ #include <string>
 #include <iostream>
 #include <cctype>
 #include <memory>
@@ -7,124 +7,121 @@
 #include "Core/Parser/ParsedCommand.h"
 #include "Exceptions/ParserException.h"
 
-std::unique_ptr<ParsedCommand> Parser::parse(const std::string& line) {
-    const auto firstChar = firstNonWhitespace(line);
-    if (firstChar == std::string::npos) return nullptr;
-    std::vector<size_t> unexpectedCharacters;
-    size_t quotesError = std::string::npos;
-    std::vector<size_t> invalidOptions;
-    auto parsed = std::make_unique<ParsedCommand>();
-    const size_t index = parseName(line, firstChar, *parsed, unexpectedCharacters);
-    parseElse(line, index, *parsed, unexpectedCharacters, &quotesError, invalidOptions);
-    if (!unexpectedCharacters.empty()) {
-        throw ParserException(line, unexpectedCharacters, "unexpected characters: ");
-    }
-    if (quotesError != std::string::npos) {
-        throw ParserException(line, {quotesError}, "quotes not closed");
-    }
-    if (!invalidOptions.empty()) {
-        throw ParserException(line, invalidOptions, "option not specified");
-    }
-    return parsed;
+std::unique_ptr<ParsedCommand> Parser::parse() {
+    std::vector<Token> tokens = tokenize();
+    if (tokens.empty()) return nullptr;
+    return build(tokens);
 }
 
-bool Parser::isAllowed(const char c) {
-    return std::isalnum(c);
-}
+std::vector<Token> Parser::tokenize() {
+    std::vector<Token> tokens;
+    std::vector<size_t> invalidCharacterPositions;
+    size_t i = 0;
 
-size_t Parser::firstNonWhitespace(const std::string &line) {
-    for (size_t i = 0; i < line.length(); i++) {
-        if (!isspace(line[i])) return i;
-    }
-    return std::string::npos;
-}
-
-void Parser::moveBuffer(std::string& buffer, ParsedCommand& pc, const TokenType type) {
-    pc.tokens.push_back(Token{buffer, type});
-    buffer = "";
-}
-
-size_t Parser::parseName(const std::string &line, const size_t index, ParsedCommand &pc, std::vector<size_t> &errorPositions) {
-    size_t i;
-    std::string buffer;
-    for (i = index; i < line.length(); i++) {
-        if (isspace(line[i])) {
-            pc.name = buffer;
-            return i;
-        }
-        if (isAllowed(line[i])) {
-            buffer += line[i];
-            continue;
-        }
-        errorPositions.push_back(i);
-    }
-    pc.name = buffer;
-    return i;
-}
-
-void Parser::parseElse(const std::string& line, const size_t index, ParsedCommand& pc, std::vector<size_t>& errorPositions, size_t* quotesPosition, std::vector<size_t>& invalidOptions) {
-    std::string buffer;
-    bool inQuotes = false;
-    bool isOption = false;
-    bool prevSpace = true;
-    for (size_t i = index; i < line.length(); i++) {
+    while (i < line.length()) {
         const char c = line[i];
 
+        if (std::isspace(c)) {
+            i++;
+            continue;
+        }
+
         if (c == '"') {
-            if (inQuotes) {
-                moveBuffer(buffer, pc, isOption ? TokenType::Option : TokenType::QuotedString);
-                inQuotes = false;
-                isOption = false;
-                *quotesPosition = std::string::npos;
-            }
-            else {
-                *quotesPosition = i;
-                inQuotes = true;
-            }
-            prevSpace = false;
-            continue;
+            tokens.push_back(readQuotedString(i));
+        } else if (c == '-') {
+            tokens.push_back(readOption(i, invalidCharacterPositions));
+        } else {
+            tokens.push_back(readWord(i, invalidCharacterPositions));
         }
-        if (inQuotes) {
-            buffer += c;
-            continue;
-        }
-        if (c == '-') {
-            if (!prevSpace) {
-                buffer += c;
-                continue;
-            }
-            isOption = true;
-            prevSpace = false;
-            continue;
-        }
-        if (isspace(c)) {
-            if (prevSpace || buffer.empty()) {
-                prevSpace = true;
-                continue;
-            }
-            if (isOption and buffer.empty()) {
-                invalidOptions.push_back(i);
-                prevSpace = true;
-                isOption = false;
-                continue;
-            }
-            moveBuffer(buffer, pc, isOption ? TokenType::Option : TokenType::Filename);
-            prevSpace = true;
-            isOption = false;
-            continue;
-        }
-        if (isAllowed(c) or c == '.' or c == '_' or c == '/') {
-            buffer += c;
+    }
+
+    if (!invalidCharacterPositions.empty()) {
+        throw ParserException(line, invalidCharacterPositions, "unexpected characters");
+    }
+
+    return tokens;
+}
+
+Token Parser::readWord(size_t& index, std::vector<size_t>& invalidPositions) const {
+    std::string word;
+    const auto start = index;
+    while (index < line.length() && !std::isspace(line[index]) && line[index] != '"' && line[index] != '-') {
+        const char c = line[index];
+        if (!isAllowed(c)) {
+            invalidPositions.push_back(index);
         }
         else {
-            errorPositions.push_back(i);
+            word += c;
         }
-        prevSpace = false;
+        index++;
     }
-    if (!buffer.empty()) {
-        moveBuffer(buffer, pc, isOption ? TokenType::Option :TokenType::Filename);
-        isOption = false;
-    }
-    if (isOption)
-        invalidOptions.push_back(line.length() - 1);
+
+    return {word, TokenType::Word, start};
 }
+
+
+Token Parser::readQuotedString(size_t& index) {
+    std::string str;
+    const auto start = index;
+    index++;
+    while (index < line.length() && line[index] != '"') {
+        const char c = line[index];
+        str += c;
+        index++;
+    }
+    if (index == line.length()) {
+        throw ParserException(line, {start}, "quotes not closed");
+    }
+    index++;
+    return {str, TokenType::QuotedString, start};
+}
+
+Token Parser::readOption(size_t& index, std::vector<size_t>& invalidPositions) {
+    std::string option;
+    const auto start = index;
+    index++;
+    if (index == line.length()) {
+        throw ParserException(line, {start}, "option not specified");
+    }
+
+    if (line[index] == '"') {
+        auto token = readQuotedString(index);
+        token.type = TokenType::Option;
+        token.position = start;
+        return token;
+    }
+
+    while (index < line.length() && !std::isspace(line[index])) {
+        const char c = line[index];
+        if (c == '"' || c == '-') {
+            invalidPositions.push_back(index);
+            index++;
+            continue;
+        }
+        if (!isAllowed(c)) {
+            invalidPositions.push_back(index);
+        }
+        else {
+            option += c;
+        }
+        index++;
+    }
+
+    return {option, TokenType::Option, start};
+}
+
+std::unique_ptr<ParsedCommand> Parser::build(const std::vector<Token>& tokens) {
+    auto parsedCommand = std::make_unique<ParsedCommand>();
+    if (tokens[0].type != TokenType::Word) {
+        throw std::runtime_error("command name not given");
+    }
+
+    parsedCommand->name = tokens[0].value;
+
+    for (size_t i = 1; i < tokens.size(); i++) {
+        const auto& token = tokens[i];
+        parsedCommand->tokens.push_back(token);
+    }
+
+    return parsedCommand;
+} 

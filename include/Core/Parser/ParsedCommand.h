@@ -13,6 +13,7 @@ enum class TokenType {
 struct Token {
     std::string value;
     TokenType type;
+    size_t position;
 };
 
 struct ParsedCommand {

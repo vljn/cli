@@ -10,14 +10,22 @@ class Command;
 
 class Parser {
 public:
-    static std::unique_ptr<ParsedCommand> parse(const std::string& line);
+    explicit Parser(const std::string& line) : line(line) {}
+
+    std::unique_ptr<ParsedCommand> parse();
 private:
-    static bool isAllowed(char c);
-    static void moveBuffer(std::string& buffer, ParsedCommand& pc, TokenType type);
-    static size_t parseName(const std::string &line, size_t index, ParsedCommand &pc, std::vector<size_t> &errorPositions);
-    static void parseElse(const std::string &line, size_t index, ParsedCommand &pc, std::vector<size_t> &errorPositions, size_t *quotesPosition, std::
-                          vector<size_t> &invalidOptions);
-    static size_t firstNonWhitespace(const std::string& line);
+    std::vector<Token> tokenize();
+    Token readWord(size_t& index, std::vector<size_t>& invalidPositions) const;
+    Token readQuotedString(size_t& index);
+    Token readOption(size_t& index, std::vector<size_t>& invalidPositions);
+
+    static std::unique_ptr<ParsedCommand> build(const std::vector<Token>& tokens);
+
+    static bool isAllowed(const char c) {
+        return std::isalnum(c) || c == '_' || c == '.' || c == '/' || c == '\\';
+    }
+
+    const std::string& line;
 };
 
 #endif //CLI_PARSER_H
