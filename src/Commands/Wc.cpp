@@ -12,6 +12,6 @@ CommandResult Wc::do_execute(std::istream& in, std::ostream& out, std::ostream& 
         char c;
         while (in.get(c)) count++;
     }
-    out << count << std::endl;
+    out << count;
     return {};
 }

@@ -7,6 +7,7 @@
 #include <vector>
 
 struct ParsedCommand;
+struct ParsedPipeline;
 
 class Interpreter {
 public:
@@ -25,11 +26,13 @@ private:
     std::ostream& m_errorStream;
 
     std::istream& getCurrentInput();
-    std::ostream& getCurrentOutput();
+    std::ostream& getCurrentOutput() const;
 
     void printPrompt();
 
     void loop();
+
+    void executePipeline(const ParsedPipeline& pipeline);
 
     static std::unique_ptr<std::istream> handleInRedirection(const ParsedCommand& parsedCommand);
     static std::unique_ptr<std::ostream> handleOutRedirection(const ParsedCommand& parsedCommand);

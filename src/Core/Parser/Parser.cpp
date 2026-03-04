@@ -7,10 +7,11 @@
 #include "Core/Parser/ParsedCommand.h"
 #include "Exceptions/ParserException.h"
 
-std::unique_ptr<ParsedCommand> Parser::parse() {
+std::unique_ptr<ParsedPipeline> Parser::parse() {
     std::vector<Token> tokens = tokenize();
     if (tokens.empty()) return nullptr;
-    return build(tokens);
+
+    return buildPipeline(tokens);
 }
 
 std::vector<Token> Parser::tokenize() {
@@ -40,6 +41,8 @@ std::vector<Token> Parser::tokenize() {
             } else {
                 tokens.push_back({">", TokenType::RedirectOutOverwrite, i++});
             }
+        } else if (c == '|') {
+            tokens.push_back({"|", TokenType::PipelineDivider, i++});
         } else {
             tokens.push_back(readWord(i, invalidCharacterPositions));
         }
@@ -55,7 +58,12 @@ std::vector<Token> Parser::tokenize() {
 Token Parser::readWord(size_t& index, std::vector<size_t>& invalidPositions) const {
     std::string word;
     const auto start = index;
-    while (index < line.length() && !std::isspace(line[index]) && line[index] != '"' && line[index] != '-' && line[index] != '<' && line[index] != '>') {
+    while (index < line.length()
+            && !std::isspace(line[index])
+            && line[index] != '"'
+            && line[index] != '-'
+            && line[index] != '<' && line[index] != '>'
+            && line[index] != '|') {
         const char c = line[index];
         if (!isAllowed(c)) {
             invalidPositions.push_back(index);
@@ -101,7 +109,10 @@ Token Parser::readOption(size_t& index, std::vector<size_t>& invalidPositions) {
         return token;
     }
 
-    while (index < line.length() && !std::isspace(line[index]) && line[index] != '<' && line[index] != '>') {
+    while (index < line.length()
+            && !std::isspace(line[index])
+            && line[index] != '<' && line[index] != '>'
+            && line[index] != '|') {
         const char c = line[index];
         if (c == '"' || c == '-') {
             invalidPositions.push_back(index);
@@ -120,7 +131,7 @@ Token Parser::readOption(size_t& index, std::vector<size_t>& invalidPositions) {
     return {option, TokenType::Option, start};
 }
 
-std::unique_ptr<ParsedCommand> Parser::build(const std::vector<Token>& tokens) {
+std::unique_ptr<ParsedCommand> Parser::buildSingle(const std::vector<Token>& tokens) {
     auto parsedCommand = std::make_unique<ParsedCommand>();
 
     if (tokens[0].type != TokenType::Word) {
@@ -161,7 +172,10 @@ std::unique_ptr<ParsedCommand> Parser::build(const std::vector<Token>& tokens) {
             }
             i++;
         }
-        else {
+        else if (token.type == TokenType::PipelineDivider) {
+            throw std::runtime_error("pipeline operator is not allowed in a single command");
+
+        } else {
             if (hasRedirectIn || hasRedirectOut) {
                 throw std::runtime_error("redirection expected at the end of the command");
             }
@@ -171,3 +185,57 @@ std::unique_ptr<ParsedCommand> Parser::build(const std::vector<Token>& tokens) {
 
     return parsedCommand;
 }
+
+ std::unique_ptr<ParsedPipeline> Parser::buildPipeline(const std::vector<Token>& tokens) {
+    auto pipeline = std::make_unique<ParsedPipeline>();
+
+    std::vector<std::vector<Token>> commandGroups;
+    std::vector<Token> currentCommandTokens;
+    for (const auto& token : tokens) {
+        if (token.type == TokenType::PipelineDivider) {
+            if (currentCommandTokens.empty()) {
+                throw ParserException(line, {token.position}, "empty command in pipeline");
+            }
+            commandGroups.push_back(currentCommandTokens);
+            currentCommandTokens.clear();
+        }
+        else {
+            currentCommandTokens.push_back(token);
+        }
+    }
+
+    if (currentCommandTokens.empty()) {
+        throw ParserException(line, {tokens.back().position}, "empty command in pipeline");
+    }
+    commandGroups.push_back(currentCommandTokens);
+
+    auto n = commandGroups.size();
+    for (int i = 0; i < n; i++) {
+        const auto& currentGroup = commandGroups[i];
+        auto command = buildSingle(currentGroup);
+
+        bool isFirst = (i == 0);
+        bool isLast = (i == n - 1);
+        bool isMiddle = !isFirst && !isLast;
+
+        if (isMiddle) {
+            if (!command->redirectInFilename.empty() || !command->redirectOutFilename.empty()) {
+                throw std::runtime_error("redirection is not allowed for commands in the middle of a pipeline");
+            }
+        }
+        else if (isFirst && n > 1) {
+            if (!command->redirectOutFilename.empty()) {
+                throw std::runtime_error("redirection of output is not allowed for the first command in a pipeline");
+            }
+        }
+        else if (isLast && n > 1) {
+            if (!command->redirectInFilename.empty()) {
+                throw std::runtime_error("redirection of input is not allowed for the last command in a pipeline");
+            }
+        }
+
+        pipeline->commands.push_back(std::move(command));
+    }
+
+    return pipeline;
+ }

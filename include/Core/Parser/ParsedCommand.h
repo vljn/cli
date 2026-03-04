@@ -10,7 +10,8 @@ enum class TokenType {
     Option,
     RedirectIn,
     RedirectOutOverwrite,
-    RedirectOutAppend
+    RedirectOutAppend,
+    PipelineDivider
 };
 
 struct Token {
@@ -25,6 +26,10 @@ struct ParsedCommand {
     std::string redirectInFilename;
     std::string redirectOutFilename;
     bool redirectOutAppend = false;
+};
+
+struct ParsedPipeline {
+    std::vector<std::unique_ptr<ParsedCommand>> commands;
 };
 
 #endif //CLI_PARSEDCOMMAND_H

@@ -25,7 +25,7 @@ CommandResult Tr::do_execute(std::istream& in, std::ostream& out, std::ostream& 
         }
         index++;
     }
-    out << toPrint << std::endl;
+    out << toPrint;
 
     return {};
 }
