@@ -8,6 +8,9 @@ public:
     explicit Truncate(std::string filename) : m_filename(std::move(filename)) { }
 
     CommandResult execute(std::istream& in, std::ostream& out, std::ostream& err) override;
+
+    bool consumesInput() override { return false; }
+    bool producesOutput() override { return false; }
 private:
     std::string m_filename;
 };

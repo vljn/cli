@@ -5,6 +5,8 @@
 #include <memory>
 #include <stack>
 
+struct ParsedCommand;
+
 class Interpreter {
 public:
     Interpreter(std::istream& in=std::cin, std::ostream& out=std::cout, std::ostream& errorOut=std::cerr, std::string prompt="$");
@@ -25,6 +27,9 @@ private:
     void printPrompt();
 
     void loop();
+
+    static std::unique_ptr<std::istream> handleInRedirection(const ParsedCommand& parsedCommand);
+    static std::unique_ptr<std::ostream> handleOutRedirection(const ParsedCommand& parsedCommand);
 
     std::string readLine();
 };

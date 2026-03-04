@@ -11,6 +11,8 @@ public:
         : CommandWithInputArgument(argument), m_what(std::move(what)), m_with(std::move(with))  { }
 
     CommandResult do_execute(std::istream& in, std::ostream& out, std::ostream& err) override;
+
+    bool producesOutput() override { return true; }
 private:
     std::string m_what;
     std::string m_with;

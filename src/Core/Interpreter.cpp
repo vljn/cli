@@ -1,7 +1,10 @@
-#include <iostream>
 #include <utility>
+#include <memory>
+#include <fstream>
 
 #include "Core/Interpreter.h"
+
+
 #include "Core/Factory/CommandFactory.h"
 #include "Core/Parser/Parser.h"
 
@@ -25,7 +28,21 @@ void Interpreter::loop() {
             auto parsed = p.parse();
             if (!parsed) continue;
             const auto command = CommandFactory::create(*parsed);
-            auto result = command->execute(m_inputStream, m_outputStream, m_errorStream);
+
+            std::unique_ptr<std::istream> in;
+            std::unique_ptr<std::ostream> out;
+            if (!command->consumesInput() && !parsed->redirectInFilename.empty()) {
+                throw std::runtime_error("redirection of input is not allowed for this command");
+            }
+            if (!parsed->redirectInFilename.empty())
+                in = handleInRedirection(*parsed);
+            if (!command->producesOutput() && !parsed->redirectOutFilename.empty()) {
+                throw std::runtime_error("redirection of output is not allowed for this command");
+            }
+            if (!parsed->redirectOutFilename.empty())
+                out = handleOutRedirection(*parsed);
+            auto result = command->execute(in ? *in : m_inputStream, out ? *out : m_outputStream, m_errorStream);
+
             if (result.action == InterpreterAction::PushStream) {
                 if (result.newStream) {
                     m_inputStack.push(std::move(result.newStream));
@@ -39,6 +56,37 @@ void Interpreter::loop() {
             m_errorStream << "Error - " << e.what() << std::endl;
         }
     }
+}
+
+std::unique_ptr<std::istream> Interpreter::handleInRedirection(const ParsedCommand& parsedCommand) {
+        std::unique_ptr<std::istream> in = nullptr;
+
+        if (!parsedCommand.redirectInFilename.empty()) {
+            in = std::make_unique<std::ifstream>(parsedCommand.redirectInFilename);
+            if (!*in) {
+                throw std::runtime_error("error opening a file: " + parsedCommand.redirectInFilename);
+            }
+        }
+
+        return std::move(in);
+}
+
+std::unique_ptr<std::ostream> Interpreter::handleOutRedirection(const ParsedCommand& parsedCommand) {
+    std::unique_ptr<std::ostream> out = nullptr;
+
+    if (!parsedCommand.redirectOutFilename.empty()) {
+        if (parsedCommand.redirectOutAppend) {
+            out = std::make_unique<std::ofstream>(parsedCommand.redirectOutFilename, std::ios_base::app);
+        }
+        else {
+            out = std::make_unique<std::ofstream>(parsedCommand.redirectOutFilename);
+        }
+        if (!*out) {
+            throw std::runtime_error("error opening a file: " + parsedCommand.redirectOutFilename);
+        }
+    }
+
+    return std::move(out);
 }
 
 std::string Interpreter::readLine() {

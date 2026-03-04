@@ -7,7 +7,10 @@
 enum class TokenType {
     Word,
     QuotedString,
-    Option
+    Option,
+    RedirectIn,
+    RedirectOutOverwrite,
+    RedirectOutAppend
 };
 
 struct Token {
@@ -19,6 +22,9 @@ struct Token {
 struct ParsedCommand {
     std::string name;
     std::vector<Token> tokens;
+    std::string redirectInFilename;
+    std::string redirectOutFilename;
+    bool redirectOutAppend = false;
 };
 
 #endif //CLI_PARSEDCOMMAND_H

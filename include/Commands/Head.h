@@ -9,6 +9,8 @@ public:
         : CommandWithInputArgument(argument), m_lineCount(lineCount) { }
 
     CommandResult do_execute(std::istream& in, std::ostream& out, std::ostream& err) override;
+
+    bool producesOutput() override { return true; }
 private:
     unsigned m_lineCount;
 };

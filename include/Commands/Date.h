@@ -6,6 +6,9 @@
 class Date : public Command {
 public:
     CommandResult execute(std::istream& in, std::ostream& out, std::ostream& err) override;
+
+    bool consumesInput() override { return false; }
+    bool producesOutput() override { return true; }
 };
 
 #endif //CLI_DATE_H

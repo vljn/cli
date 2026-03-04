@@ -20,6 +20,8 @@ public:
     CommandResult execute(std::istream& in, std::ostream& out, std::ostream& err) final;
 
     virtual CommandResult do_execute(std::istream& in, std::ostream& out, std::ostream& err) = 0;
+
+    bool consumesInput() final { return true; }
 private:
     std::unique_ptr<std::istream> m_in;
 };

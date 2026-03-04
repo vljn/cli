@@ -14,6 +14,8 @@ public:
         : CommandWithInputArgument(argument), m_mode(mode) { }
 
     CommandResult do_execute(std::istream& in, std::ostream& out, std::ostream& err) override;
+
+    bool producesOutput() override { return true; }
 private:
     Mode m_mode;
 };

@@ -9,6 +9,8 @@ public:
         : CommandWithInputArgument(argument) { }
 
     CommandResult do_execute(std::istream& in, std::ostream& out, std::ostream& err) override;
+
+    bool producesOutput() override { return true; }
 };
 
 #endif //CLI_ECHO_H

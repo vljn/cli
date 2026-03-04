@@ -30,6 +30,16 @@ std::vector<Token> Parser::tokenize() {
             tokens.push_back(readQuotedString(i));
         } else if (c == '-') {
             tokens.push_back(readOption(i, invalidCharacterPositions));
+        } else if (c == '<') {
+            tokens.push_back({"<", TokenType::RedirectIn, i++});
+        }
+        else if (c == '>') {
+            if (i + 1 < line.length() && line[i + 1] == '>') {
+                tokens.push_back({">>", TokenType::RedirectOutAppend, i});
+                i += 2;
+            } else {
+                tokens.push_back({">", TokenType::RedirectOutOverwrite, i++});
+            }
         } else {
             tokens.push_back(readWord(i, invalidCharacterPositions));
         }
@@ -45,7 +55,7 @@ std::vector<Token> Parser::tokenize() {
 Token Parser::readWord(size_t& index, std::vector<size_t>& invalidPositions) const {
     std::string word;
     const auto start = index;
-    while (index < line.length() && !std::isspace(line[index]) && line[index] != '"' && line[index] != '-') {
+    while (index < line.length() && !std::isspace(line[index]) && line[index] != '"' && line[index] != '-' && line[index] != '<' && line[index] != '>') {
         const char c = line[index];
         if (!isAllowed(c)) {
             invalidPositions.push_back(index);
@@ -91,7 +101,7 @@ Token Parser::readOption(size_t& index, std::vector<size_t>& invalidPositions) {
         return token;
     }
 
-    while (index < line.length() && !std::isspace(line[index])) {
+    while (index < line.length() && !std::isspace(line[index]) && line[index] != '<' && line[index] != '>') {
         const char c = line[index];
         if (c == '"' || c == '-') {
             invalidPositions.push_back(index);
@@ -112,16 +122,52 @@ Token Parser::readOption(size_t& index, std::vector<size_t>& invalidPositions) {
 
 std::unique_ptr<ParsedCommand> Parser::build(const std::vector<Token>& tokens) {
     auto parsedCommand = std::make_unique<ParsedCommand>();
+
     if (tokens[0].type != TokenType::Word) {
         throw std::runtime_error("command name not given");
     }
-
     parsedCommand->name = tokens[0].value;
 
+
+    bool hasRedirectIn = false;
+    bool hasRedirectOut = false;
     for (size_t i = 1; i < tokens.size(); i++) {
         const auto& token = tokens[i];
-        parsedCommand->tokens.push_back(token);
+
+        if (token.type == TokenType::RedirectIn || token.type == TokenType::RedirectOutOverwrite || token.type == TokenType::RedirectOutAppend) {
+            if (i + 1 >= tokens.size()) {
+                throw std::runtime_error("redirection filename not specified");
+            }
+
+            const auto& nextToken = tokens[i + 1];
+            if (nextToken.type != TokenType::Word) {
+                throw std::runtime_error("file name expected after redirection operator");
+            }
+
+            if (token.type == TokenType::RedirectIn) {
+                if (hasRedirectIn) {
+                    throw std::runtime_error("multiple input redirections specified");
+                }
+                hasRedirectIn = true;
+                parsedCommand->redirectInFilename = nextToken.value;
+            }
+            else if (token.type == TokenType::RedirectOutOverwrite || token.type == TokenType::RedirectOutAppend) {
+                if (hasRedirectOut) {
+                    throw std::runtime_error("multiple output redirections specified");
+                }
+                hasRedirectOut = true;
+                parsedCommand->redirectOutFilename = nextToken.value;
+                parsedCommand->redirectOutAppend = token.type == TokenType::RedirectOutAppend;
+            }
+            i++;
+        }
+        else {
+            if (hasRedirectIn || hasRedirectOut) {
+                throw std::runtime_error("redirection expected at the end of the command");
+            }
+            parsedCommand->tokens.push_back(token);
+        }
     }
 
     return parsedCommand;
-} 
+}
