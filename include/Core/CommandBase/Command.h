@@ -23,6 +23,8 @@ public:
     virtual bool consumesInput() = 0;
     virtual bool producesOutput() = 0;
 
+    virtual bool hasInputArgumentSet() const { return false; }
+
     virtual CommandResult execute(std::istream& in, std::ostream& out, std::ostream& err) = 0;
 };
 

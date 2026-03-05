@@ -41,6 +41,7 @@ void Interpreter::executePipeline(const ParsedPipeline& pipeline) {
     std::unique_ptr<std::stringstream> previousOutput = nullptr;
 
     bool lastProducesOutput = false;
+    InterpreterAction lastAction = InterpreterAction::None;
 
     for (int i = 0; i < pipeline.commands.size(); ++i) {
         const auto& parsed = *pipeline.commands[i];
@@ -48,6 +49,19 @@ void Interpreter::executePipeline(const ParsedPipeline& pipeline) {
 
         bool isFirst = (i == 0);
         bool isLast = (i == pipeline.commands.size() - 1);
+
+        if (!isFirst) {
+            if (!commandPtr->consumesInput())
+                throw std::runtime_error("command '" + parsed.name + "' cannot receive input from pipeline");
+
+            if (commandPtr->hasInputArgumentSet()) {
+                throw std::runtime_error("command '" + parsed.name + "' has ambigous input");
+            }
+        }
+
+        if (!isLast && !commandPtr->producesOutput()) {
+            throw std::runtime_error("command '" + parsed.name + "' does not produce output for the pipeline");
+        }
 
         std::istream* finalIn = nullptr;
         std::unique_ptr<std::istream> fileIn = nullptr;
@@ -90,7 +104,7 @@ void Interpreter::executePipeline(const ParsedPipeline& pipeline) {
         previousOutput = std::move(nextOutput);
 
         lastProducesOutput = commandPtr->producesOutput();
-
+        lastAction = result.action;
         if (isLast) {
             if (result.action == InterpreterAction::PushStream) {
                 if (result.newStream) {
@@ -110,7 +124,7 @@ void Interpreter::executePipeline(const ParsedPipeline& pipeline) {
     }
 
     auto lastCommand = *pipeline.commands.back();
-    if (lastProducesOutput && lastCommand.name != "batch" && lastCommand.redirectOutFilename.empty()) {
+    if (lastProducesOutput && lastAction != InterpreterAction::PushStream && lastCommand.redirectOutFilename.empty()) {
         getCurrentOutput() << std::endl;
     }
 }

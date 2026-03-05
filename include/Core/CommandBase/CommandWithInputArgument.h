@@ -22,6 +22,8 @@ public:
     virtual CommandResult do_execute(std::istream& in, std::ostream& out, std::ostream& err) = 0;
 
     bool consumesInput() final { return true; }
+
+    bool hasInputArgumentSet() const final { return m_in != nullptr; }
 private:
     std::unique_ptr<std::istream> m_in;
 };
