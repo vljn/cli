@@ -14,9 +14,13 @@ $ echo "Hello"
 Hello  
 $ echo "Hello" | wc -c  
 5  
-$ time >out.txt  
-12:00  
+$ time >out.txt    
 $ touch new.txt
+
+// out.txt
+12:00
+// new.txt
+(empty)
 ```
   
 ## Quick start
