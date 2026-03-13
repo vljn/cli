@@ -1,3 +1,6 @@
+#include <string>
+#include <iostream>
+
 #include "Commands/Head.h"
 
 CommandResult Head::do_execute(std::istream& in, std::ostream& out, std::ostream& err) {
