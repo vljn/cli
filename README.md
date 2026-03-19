@@ -1,3 +1,42 @@
 # C++ Command Line Interpreter
 
-Jednostavan C++ program koji implementira osnovni komandni linijski interfejs (CLI), rađen kao projekat u okviru predmeta _Objektno orijentisano programiranje 1_.
+A modular C++ command line interpreter application with support for:
+
+- pluggable commands
+- command parsing and validation
+- batch execution with nested streams
+- command pipelining
+- input and output redirection
+
+## Example
+```
+$ echo "Hello"  
+Hello  
+$ echo "Hello" | wc -c  
+5  
+$ time >out.txt    
+$ touch new.txt
+
+// out.txt
+12:00
+// new.txt
+(empty)
+```
+  
+## Quick start
+
+### Build
+```
+git clone https://github.com/vljn/cli
+cd cli
+cmake -S . -B build
+cmake --build build
+```
+
+### Run
+
+**Windows**:  
+`./build/Debug/cli.exe`
+
+**Linux / macOS**:  
+`./build/cli`
