@@ -17,9 +17,10 @@ CommandResult Head::do_execute(std::istream& in, std::ostream& out, std::ostream
                 first = false;
             }
             toPrint += buffer;
-        }
-        if (&in != &std::cin) {
-            break;
+
+            if (&in != &std::cin) {
+                break;
+            }
         }
     }
     out << toPrint;
